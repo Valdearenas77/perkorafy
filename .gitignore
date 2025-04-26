@@ -1,0 +1,9 @@
+# Node modules
+node_modules/
+
+# Build outputs
+.next/
+out/
+
+# System files
+.DS_Store
