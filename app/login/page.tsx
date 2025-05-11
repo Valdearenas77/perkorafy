@@ -5,7 +5,6 @@ import { useState } from "react"
 import { useRouter } from "next/navigation"
 import { Card, CardContent, CardHeader } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
-import { Button } from "@/components/ui/button"
 
 export default function LoginPage() {
   const router = useRouter()
@@ -30,8 +29,8 @@ export default function LoginPage() {
       return
     }
 
-    // Si login correcto → redirigir al home (o dashboard)
-    router.push("/")
+    // Login correcto → redirigir
+    router.push("/dashboard")
   }
 
   return (
@@ -61,12 +60,12 @@ export default function LoginPage() {
               </a>
             </div>
             {error && <p className="text-sm text-red-600">{error}</p>}
-	<button 
-	   type="submit"
-           className="w-full h-10 px-4 py-2 rounded-md bg-blue-600 text-white text-sm font-    medium hover:bg-blue-700 transition">
-  	   Iniciar sesión
-	</button>
-
+            <button
+              type="submit"
+              className="w-full h-10 px-4 py-2 rounded-md bg-blue-600 text-white text-sm font-medium hover:bg-blue-700 transition"
+            >
+              Iniciar sesión
+            </button>
           </form>
         </CardContent>
       </Card>
