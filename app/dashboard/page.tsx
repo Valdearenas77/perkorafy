@@ -10,7 +10,9 @@ export default function DashboardPage() {
 
   useEffect(() => {
     const fetchUser = async () => {
-      const res = await fetch("/api/user")
+      const res = await fetch("/api/user", {
+  	credentials: "include", // 👈 Necesario para enviar la cookie con el token
+	})
       if (res.ok) {
         const data = await res.json()
         setUserName(data.name)
