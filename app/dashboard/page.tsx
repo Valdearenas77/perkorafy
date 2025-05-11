@@ -6,17 +6,27 @@ import { Card, CardContent, CardHeader } from "@/components/ui/card"
 
 export default function DashboardPage() {
   const router = useRouter()
-  const [user, setUser] = useState<{ name: string } | null>(null)
+  const [userName, setUserName] = useState("")
 
   useEffect(() => {
-    // Esto lo cambiaremos luego por lectura real de sesión (JWT o cookie)
-    setUser({ name: "Administrador" })
-  }, [])
+    const fetchUser = async () => {
+      const res = await fetch("/api/user")
+      if (res.ok) {
+        const data = await res.json()
+        setUserName(data.name)
+      } else {
+        router.push("/login") // Si no hay token válido, redirige
+      }
+    }
+
+    fetchUser()
+  }, [router])
 
   const handleLogout = () => {
-    // Aquí luego borraremos JWT/cookie real
-    setUser(null)
-    router.push("/login")
+    // Elimina la cookie (lo haremos bien luego)
+    fetch("/api/logout", { method: "POST" }).then(() => {
+      router.push("/login")
+    })
   }
 
   return (
@@ -27,7 +37,7 @@ export default function DashboardPage() {
             👤
           </div>
           <h1 className="text-xl font-semibold text-center">
-            Bienvenido{user ? `, ${user.name}` : ""} 🎉
+            Bienvenido, {userName} 🎉
           </h1>
         </CardHeader>
         <CardContent className="px-6 pb-6 space-y-4">
