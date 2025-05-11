@@ -61,9 +61,12 @@ export default function LoginPage() {
               </a>
             </div>
             {error && <p className="text-sm text-red-600">{error}</p>}
-            <Button className="w-full" type="submit">
-              Iniciar sesión
-            </Button>
+	<button 
+	   type="submit"
+           className="w-full h-10 px-4 py-2 rounded-md bg-blue-600 text-white text-sm font-    medium hover:bg-blue-700 transition">
+  	   Iniciar sesión
+	</button>
+
           </form>
         </CardContent>
       </Card>
