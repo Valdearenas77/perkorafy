@@ -46,6 +46,13 @@ export default function CatalogoPage() {
       .then(data => setUsuario(data.name))
       .catch(() => window.location.href = '/login')
   }, [])
+  const handleCanjear = (perk: Perk) => {
+  const confirmar = window.confirm(`¿Seguro que quieres canjear "${perk.nombre}" por ${perk.puntos} perks?`)
+  if (confirmar) {
+    alert(`🎉 Has canjeado el beneficio: ${perk.nombre}`)
+    // Aquí en el futuro llamaremos a la API: fetch('/api/canjear', { ... })
+  }
+}
 
   return (
     <div className="min-h-screen bg-gray-100 p-6">
@@ -65,9 +72,11 @@ export default function CatalogoPage() {
               <p className="text-sm text-gray-600">{perk.descripcion}</p>
               <div className="flex justify-between items-center mt-2">
                 <span className="font-bold text-blue-600">{perk.puntos} perks</span>
-                <button className="bg-green-600 text-white px-3 py-1 rounded hover:bg-green-700 text-sm">
-                  Canjear
-                </button>
+                <button
+                   onClick={() => handleCanjear(perk)}
+                   className="bg-green-600 text-white px-3 py-1 rounded hover:bg-green-700 text-sm">
+                   Canjear
+               </button>
               </div>
             </CardContent>
           </Card>
