@@ -4,6 +4,8 @@
 
 import { useEffect, useState } from 'react'
 import { Card, CardContent, CardHeader } from '@/components/ui/card'
+import { ConfirmarCanjeDialog } from '@/components/ConfirmarCanjeDialog'
+
 
 type Perk = {
   id: number
@@ -72,11 +74,10 @@ export default function CatalogoPage() {
               <p className="text-sm text-gray-600">{perk.descripcion}</p>
               <div className="flex justify-between items-center mt-2">
                 <span className="font-bold text-blue-600">{perk.puntos} perks</span>
-                <button
-                   onClick={() => handleCanjear(perk)}
-                   className="bg-green-600 text-white px-3 py-1 rounded hover:bg-green-700 text-sm">
-                   Canjear
-               </button>
+                <ConfirmarCanjeDialog
+                  perkNombre={perk.nombre}
+                  onConfirm={() => alert(`🎉 Has canjeado el beneficio: ${perk.nombre}`)}
+                />
               </div>
             </CardContent>
           </Card>
