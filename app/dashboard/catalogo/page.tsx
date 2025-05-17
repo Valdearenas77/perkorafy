@@ -49,6 +49,10 @@ export default function CatalogoPage() {
 
   return (
     <div className="min-h-screen bg-gray-100 p-6">
+      <a href="/dashboard"
+         className="inline-flex items-center text-blue-600 hover:underline mb-4">
+         ← Volver al panel
+     </a>
       <h1 className="text-2xl font-bold mb-6 text-center">🎁 Catálogo de beneficios</h1>
       <div className="grid gap-6 grid-cols-1 sm:grid-cols-2 md:grid-cols-3">
         {perks.map(perk => (
