@@ -60,7 +60,7 @@ export default function CatalogoPage() {
               <h2 className="text-lg font-semibold">{perk.nombre}</h2>
               <p className="text-sm text-gray-600">{perk.descripcion}</p>
               <div className="flex justify-between items-center mt-2">
-                <span className="font-bold text-blue-600">{perk.puntos} pts</span>
+                <span className="font-bold text-blue-600">{perk.puntos} perks</span>
                 <button className="bg-green-600 text-white px-3 py-1 rounded hover:bg-green-700 text-sm">
                   Canjear
                 </button>
