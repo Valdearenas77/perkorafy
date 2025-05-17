@@ -24,12 +24,11 @@ export default function DashboardPage() {
     fetchUser()
   }, [router])
 
-  const handleLogout = () => {
-    // Elimina la cookie (lo haremos bien luego)
-    fetch("/api/logout", { method: "POST" }).then(() => {
-      router.push("/login")
-    })
-  }
+const handleLogout = async () => {
+  await fetch("/api/logout")
+  router.push("/login")
+}
+
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-100 p-4">
