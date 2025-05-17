@@ -49,7 +49,7 @@ const handleLogout = async () => {
             <a className="block bg-blue-100 text-blue-900 font-medium px-4 py-2 rounded-md hover:bg-blue-200 transition" href="#">
               📣 Comunicados
             </a>
-            <a className="block bg-blue-100 text-blue-900 font-medium px-4 py-2 rounded-md hover:bg-blue-200 transition" href="#">
+            <a className="block bg-blue-100 text-blue-900 font-medium px-4 py-2 rounded-md hover:bg-blue-200 transition" href="/dashboard/catalogo">
               🎁 Catálogo de beneficios
             </a>
             <a className="block bg-blue-100 text-blue-900 font-medium px-4 py-2 rounded-md hover:bg-blue-200 transition" href="#">
