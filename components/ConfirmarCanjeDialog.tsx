@@ -35,9 +35,13 @@ export function ConfirmarCanjeDialog({ perkNombre, onConfirm }: Props) {
         </DialogHeader>
         <p>¿Seguro que quieres canjear el beneficio "<strong>{perkNombre}</strong>"?</p>
         <DialogFooter className="mt-4">
-          <Button variant="outline" onClick={() => setOpen(false)}>
-            Cancelar
-          </Button>
+<Button
+  onClick={() => setOpen(false)}
+  className="bg-gray-200 hover:bg-gray-300 text-black"
+>
+  Cancelar
+</Button>
+
           <Button onClick={handleConfirm}>
             Confirmar
           </Button>
