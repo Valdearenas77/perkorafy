@@ -27,7 +27,7 @@ export function ConfirmarCanjeDialog({ perkNombre, onConfirm }: Props) {
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button variant="success" className="text-sm">Canjear</Button>
+      <Button className="text-sm bg-green-600 hover:bg-green-700 text-white">Canjear</Button>
       </DialogTrigger>
       <DialogContent>
         <DialogHeader>
