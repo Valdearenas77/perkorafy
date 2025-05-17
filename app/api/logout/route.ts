@@ -7,9 +7,9 @@ export async function GET() {
     new URL('/login', process.env.NEXT_PUBLIC_BASE_URL || 'https://app.perkorafy.com')
   );
 
-  // Elimina la cookie llamada 'auth_token'
+  // Elimina la cookie llamada 'token'
   response.cookies.set({
-    name: 'auth_token',
+    name: 'token',
     value: '',
     path: '/',
     expires: new Date(0),
