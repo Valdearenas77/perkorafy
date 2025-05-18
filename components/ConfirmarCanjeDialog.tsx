@@ -11,7 +11,7 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog"
 import { Button } from "@/components/ui/button"
-import { toast } from "@/components/ui/use-toast"
+import { usetoast } from "@/components/ui/toast"
 
 interface ConfirmarCanjeDialogProps {
   perkId: number
