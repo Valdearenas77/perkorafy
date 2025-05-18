@@ -44,8 +44,8 @@ export default function CatalogoPage() {
     fetch('/api/user', { credentials: 'include' })
       .then(res => res.ok ? res.json() : Promise.reject())
       .then(data => {
-        setUsuario(data.name)
-        setPerksUsuario(data.perks)
+        setUsuario(data.name || "")
+        setPerksUsuario(data.perks ?? 0)
       })
       .catch(() => window.location.href = '/login')
   }, [])
@@ -55,7 +55,7 @@ export default function CatalogoPage() {
       <a href="/dashboard"
          className="inline-flex items-center text-blue-600 hover:underline mb-4">
          ← Volver al panel
-     </a>
+      </a>
       <h1 className="text-2xl font-bold mb-6 text-center">🎁 Catálogo de beneficios</h1>
       <div className="grid gap-6 grid-cols-1 sm:grid-cols-2 md:grid-cols-3">
         {perks.map(perk => (
