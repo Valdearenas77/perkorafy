@@ -1,50 +1,53 @@
-import { NextResponse } from "next/server"
-import { PrismaClient } from "@prisma/client"
-import bcrypt from "bcryptjs"
-import jwt from "jsonwebtoken"
+import { NextRequest, NextResponse } from 'next/server'
+import { prisma } from '@/lib/prisma'
+import jwt from 'jsonwebtoken'
+import { compare } from 'bcryptjs'
 
-const prisma = new PrismaClient()
-const JWT_SECRET = process.env.JWT_SECRET || "clave_super_secreta"
+const JWT_SECRET = process.env.JWT_SECRET ?? 'clave_super_secreta'
 
-export async function POST(request: Request) {
+export async function POST(req: NextRequest) {
   try {
-    const { email, password } = await request.json()
+    const body = await req.json()
+    const { email, password } = body
 
     if (!email || !password) {
-      return NextResponse.json({ error: "Email y contraseña requeridos" }, { status: 400 })
+      return NextResponse.json({ error: 'Email y contraseña obligatorios' }, { status: 400 })
     }
 
     const user = await prisma.user.findUnique({ where: { email } })
 
     if (!user) {
-      return NextResponse.json({ error: "Usuario no encontrado" }, { status: 401 })
+      return NextResponse.json({ error: 'Usuario no encontrado' }, { status: 404 })
     }
 
-    const valid = await bcrypt.compare(password, user.password)
-
-    if (!valid) {
-      return NextResponse.json({ error: "Contraseña incorrecta" }, { status: 401 })
+    const isValid = await compare(password, user.password)
+    if (!isValid) {
+      return NextResponse.json({ error: 'Contraseña incorrecta' }, { status: 401 })
     }
 
     const token = jwt.sign(
-      { id: user.id, name: user.name, email: user.email },
+      {
+        userId: user.id,         // 👈 importante: userId, no solo id
+        name: user.name,
+        email: user.email,
+      },
       JWT_SECRET,
-      { expiresIn: "1h" }
+      { expiresIn: '1h' }
     )
 
-    const response = NextResponse.json({ message: "Login correcto" })
+    const response = NextResponse.json({ message: 'Login correcto' }, { status: 200 })
 
-    response.cookies.set("token", token, {
+    response.cookies.set('token', token, {
       httpOnly: true,
-      path: "/",
-      maxAge: 60 * 60,
-      secure: process.env.NODE_ENV === "production", // 👈 solo en prod
-      sameSite: "lax",
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'lax',
+      path: '/',
+      maxAge: 60 * 60, // 1 hora
     })
 
     return response
   } catch (error) {
-    console.error("❌ Error en /api/login:", error)
-    return NextResponse.json({ error: "Error interno en el servidor" }, { status: 500 })
+    console.error('Error en login:', error)
+    return NextResponse.json({ error: 'Error interno del servidor' }, { status: 500 })
   }
 }
