@@ -15,17 +15,19 @@ export async function POST(req: NextRequest) {
     }
 
     const token = cookies().get('token')?.value
+    console.log('🍪 Token recibido:', token)
     if (!token) {
       return NextResponse.json({ error: 'No autenticado' }, { status: 401 })
     }
 
-    const decoded = verify(token, JWT_SECRET) as { id?: string }
+const decoded = verify(token, JWT_SECRET) as { userId?: number }
 
-    if (!decoded?.id) {
-      return NextResponse.json({ error: 'Token inválido: no contiene id' }, { status: 401 })
-    }
+if (!decoded?.userId) {
+  return NextResponse.json({ error: 'Token inválido: no contiene userId' }, { status: 401 })
+}
 
-    const userId = parseInt(decoded.id)
+const userId = decoded.userId
+
 
     const user = await prisma.user.findUnique({ where: { id: userId } })
     if (!user) {
