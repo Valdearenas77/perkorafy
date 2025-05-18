@@ -55,4 +55,24 @@ export default function ConfirmarCanjeDialog({
   }
 
   return (
-    <Dialog open
+    <Dialog open={open} onOpenChange={setOpen}>
+      <DialogTrigger asChild>
+        <Button className="text-sm">Canjear</Button>
+      </DialogTrigger>
+      <DialogContent>
+        <DialogHeader>
+          <DialogTitle>¿Confirmar canje?</DialogTitle>
+        </DialogHeader>
+        <p>
+          ¿Seguro que quieres canjear el beneficio <strong>{perkNombre}</strong>?
+        </p>
+        <DialogFooter className="mt-4">
+          <Button variant="outline" onClick={() => setOpen(false)}>
+            Cancelar
+          </Button>
+          <Button onClick={handleConfirm}>Confirmar</Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
+  )
+}
