@@ -13,6 +13,7 @@ import { useToast } from '@/components/ui/toaster'
 
 interface ConfirmarCanjeDialogProps {
   perkId: number
+  perkNombre: string // 👈 añade esta línea
   open: boolean
   setOpen: (open: boolean) => void
 }
@@ -67,7 +68,7 @@ export default function ConfirmarCanjeDialog({ perkId, open, setOpen }: Confirma
         <DialogHeader>
           <DialogTitle>¿Confirmar canje?</DialogTitle>
         </DialogHeader>
-        <p>¿Estás seguro de que deseas canjear este perk?</p>
+        <p>¿Estás seguro de que deseas canjear el perk: <strong>{perkNombre}</strong>?</p>
         <DialogFooter className="mt-4">
           <Button variant="outline" onClick={() => setOpen(false)}>
             Cancelar
