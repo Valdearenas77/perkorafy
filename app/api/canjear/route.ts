@@ -19,16 +19,16 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'No autenticado' }, { status: 401 })
     }
 
-    // Verificar y extraer el ID del usuario
-    const decoded = verify(token, JWT_SECRET) as { userId?: number | string }
+    // Verificar y extraer el ID del usuario desde el token (campo `id`)
+    const decoded = verify(token, JWT_SECRET) as { id?: string }
 
     console.log('🧠 decoded JWT:', decoded)
 
-    if (!decoded?.userId) {
-      return NextResponse.json({ error: 'Token inválido: no contiene userId' }, { status: 401 })
+    if (!decoded?.id) {
+      return NextResponse.json({ error: 'Token inválido: no contiene id' }, { status: 401 })
     }
 
-    const userId = typeof decoded.userId === 'string' ? parseInt(decoded.userId) : decoded.userId
+    const userId = decoded.id
 
     // Obtener el usuario
     const user = await prisma.user.findUnique({ where: { id: userId } })
