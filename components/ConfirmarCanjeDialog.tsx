@@ -27,6 +27,7 @@ export default function ConfirmarCanjeDialog({ perkId, perkNombre }: ConfirmarCa
       const res = await fetch("/api/canjear", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
+        credentials: "include", // 👈 MUY IMPORTANTE para que se envíen cookies
         body: JSON.stringify({ perkId }),
       })
 
