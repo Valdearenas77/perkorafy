@@ -10,7 +10,7 @@ import {
   DialogFooter,
 } from "@/components/ui/dialog"
 import { Button } from "@/components/ui/button"
-import { useToast } from "@/components/ui/toast"
+import { useToast } from "@/components/ui/toaster"
 
 export default function ConfirmarCanjeDialog({
   perkId,
