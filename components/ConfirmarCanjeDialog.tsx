@@ -66,7 +66,7 @@ export default function ConfirmarCanjeDialog({
           ¿Seguro que quieres canjear el beneficio <strong>{perkNombre}</strong>?
         </p>
         <DialogFooter className="mt-4">
-          <Button variant="outline" onClick={() => setOpen(false)}>
+          <Button onClick={() => setOpen(false)}>
             Cancelar
           </Button>
           <Button onClick={handleConfirm}>Confirmar</Button>
