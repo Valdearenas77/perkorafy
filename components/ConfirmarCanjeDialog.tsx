@@ -20,6 +20,7 @@ interface ConfirmarCanjeDialogProps {
 
 export default function ConfirmarCanjeDialog({ perkId, perkNombre }: ConfirmarCanjeDialogProps) {
   const [open, setOpen] = useState(false)
+  const { toast } = useToast()
 
   const handleConfirm = async () => {
     try {
