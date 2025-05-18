@@ -10,39 +10,44 @@ export async function POST(req: NextRequest) {
     const body = await req.json()
     const { perkId } = body
 
-    console.log('🟢 Llamada recibida en /api/canjear')
-    console.log('🔢 perkId:', perkId)
-
     if (!perkId) {
       return NextResponse.json({ error: 'ID del perk no proporcionado' }, { status: 400 })
     }
 
     const token = cookies().get('token')?.value
-    console.log('🍪 token:', token)
     if (!token) {
       return NextResponse.json({ error: 'No autenticado' }, { status: 401 })
     }
 
-    const decoded = verify(token, JWT_SECRET) as { userId: number }
-    console.log('🧠 decoded:', decoded)
-    const userId = decoded.userId
+    // Verificar y extraer el ID del usuario
+    const decoded = verify(token, JWT_SECRET) as { userId?: number | string }
 
+    console.log('🧠 decoded JWT:', decoded)
+
+    if (!decoded?.userId) {
+      return NextResponse.json({ error: 'Token inválido: no contiene userId' }, { status: 401 })
+    }
+
+    const userId = typeof decoded.userId === 'string' ? parseInt(decoded.userId) : decoded.userId
+
+    // Obtener el usuario
     const user = await prisma.user.findUnique({ where: { id: userId } })
-    console.log('👤 user:', user)
     if (!user) {
       return NextResponse.json({ error: 'Usuario no encontrado' }, { status: 404 })
     }
 
+    // Obtener el perk
     const perk = await prisma.perk.findUnique({ where: { id: perkId } })
-    console.log('🎁 perk:', perk)
     if (!perk) {
       return NextResponse.json({ error: 'Perk no encontrado' }, { status: 404 })
     }
 
+    // Validar si tiene suficientes puntos
     if ((user.perks ?? 0) < perk.puntos) {
       return NextResponse.json({ error: 'Puntos insuficientes' }, { status: 403 })
     }
 
+    // Registrar el canje y actualizar los puntos
     await prisma.$transaction([
       prisma.canje.create({
         data: {
