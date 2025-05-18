@@ -4,8 +4,6 @@ import { useEffect, useState } from 'react'
 import { Card, CardContent, CardHeader } from '@/components/ui/card'
 import ConfirmarCanjeDialog from "@/components/ConfirmarCanjeDialog" // ✅ Correcto
 
-const [open, setOpen] = useState(false)
-
 
 type Perk = {
   id: number
@@ -40,6 +38,7 @@ const perks: Perk[] = [
 ]
 
 export default function CatalogoPage() {
+  const [open, setOpen] = useState(false) // 👈 Mueve aquí
   const [usuario, setUsuario] = useState("")
 
   useEffect(() => {
