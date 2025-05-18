@@ -32,7 +32,7 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Perk no encontrado' }, { status: 404 })
     }
 
-    if (user.perks < perk.puntos) {
+    if ((user.perks ?? 0) < perk.puntos) {
       return NextResponse.json({ error: 'Puntos insuficientes' }, { status: 403 })
     }
 
