@@ -3,8 +3,10 @@ import { cn } from "@/lib/utils"
 
 export interface ToastProps {
   title: string
+  description?: string
   variant?: "default" | "destructive"
 }
+
 
 export const Toast = ({ title, variant = "default" }: ToastProps) => {
   return (
@@ -18,3 +20,5 @@ export const Toast = ({ title, variant = "default" }: ToastProps) => {
     </div>
   )
 }
+
+
