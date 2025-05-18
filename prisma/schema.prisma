@@ -12,4 +12,28 @@ model User {
   email    String @unique
   password String
   name     String
+  perks     Int      @default(0)
+  canjes    Canje[]
+  createdAt DateTime @default(now())
 }
+
+model Perk {
+  id          Int      @id @default(autoincrement())
+  nombre      String
+  descripcion String
+  puntos      Int
+  imagen      String?
+  canjes      Canje[]
+  createdAt   DateTime @default(now())
+}
+
+model Canje {
+  id        Int      @id @default(autoincrement())
+  usuario   User     @relation(fields: [usuarioId], references: [id])
+  usuarioId Int
+  perk      Perk     @relation(fields: [perkId], references: [id])
+  perkId    Int
+  estado    String   @default("pendiente")
+  fecha     DateTime @default(now())
+}
+
