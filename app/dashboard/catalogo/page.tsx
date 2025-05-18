@@ -1,6 +1,4 @@
-// app/dashboard/catalogo/page.tsx
-
-'use client'
+"use client"
 
 import { useEffect, useState } from 'react'
 import { Card, CardContent, CardHeader } from '@/components/ui/card'
