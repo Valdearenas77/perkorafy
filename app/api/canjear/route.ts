@@ -19,7 +19,6 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'No autenticado' }, { status: 401 })
     }
 
-    // Verificar y extraer el ID del usuario desde el token (campo `id`)
     const decoded = verify(token, JWT_SECRET) as { id?: string }
 
     console.log('🧠 decoded JWT:', decoded)
@@ -30,24 +29,20 @@ export async function POST(req: NextRequest) {
 
     const userId = decoded.id
 
-    // Obtener el usuario
-    const user = await prisma.user.findUnique({ where: { id: userId } })
+    const user = await prisma.user.findUnique({ where: { id: Number(userId) } })
     if (!user) {
       return NextResponse.json({ error: 'Usuario no encontrado' }, { status: 404 })
     }
 
-    // Obtener el perk
     const perk = await prisma.perk.findUnique({ where: { id: perkId } })
     if (!perk) {
       return NextResponse.json({ error: 'Perk no encontrado' }, { status: 404 })
     }
 
-    // Validar si tiene suficientes puntos
     if ((user.perks ?? 0) < perk.puntos) {
       return NextResponse.json({ error: 'Puntos insuficientes' }, { status: 403 })
     }
 
-    // Registrar el canje y actualizar los puntos
     await prisma.$transaction([
       prisma.canje.create({
         data: {
