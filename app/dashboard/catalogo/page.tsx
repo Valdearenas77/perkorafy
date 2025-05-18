@@ -6,6 +6,8 @@ import { useEffect, useState } from 'react'
 import { Card, CardContent, CardHeader } from '@/components/ui/card'
 import ConfirmarCanjeDialog from "@/components/ConfirmarCanjeDialog" // ✅ Correcto
 
+const [open, setOpen] = useState(false)
+
 
 type Perk = {
   id: number
@@ -77,6 +79,8 @@ export default function CatalogoPage() {
                 <ConfirmarCanjeDialog
                    perkId={perk.id}
                    perkNombre={perk.nombre}
+                   open={open}
+                   setOpen={setOpen}
                 />
               </div>
             </CardContent>
