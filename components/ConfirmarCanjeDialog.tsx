@@ -65,12 +65,50 @@ export default function ConfirmarCanjeDialog({
         <p>
           ¿Seguro que quieres canjear el beneficio <strong>{perkNombre}</strong>?
         </p>
-        <DialogFooter className="mt-4">
-          <Button onClick={() => setOpen(false)}>
-            Cancelar
-          </Button>
-          <Button onClick={handleConfirm}>Confirmar</Button>
-        </DialogFooter>
+        <DialogFooter className="mt-4 flex flex-row justify-end gap-2">
+  <Button
+    className="bg-red-600 hover:bg-red-700 text-white"
+    onClick={() => setOpen(false)}
+  >
+    Cancelar
+  </Button>
+
+  <Button
+    className="bg-blue-600 hover:bg-blue-700 text-white"
+    onClick={async () => {
+      try {
+        const res = await fetch("/api/canjear", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ perkId }),
+        })
+
+        const data = await res.json()
+
+        if (res.ok) {
+          toast({
+            title: "🎉 Canje exitoso",
+            variant: "default",
+          })
+          setOpen(false)
+        } else {
+          toast({
+            title: "⚠️ No se pudo canjear",
+            variant: "destructive",
+          })
+        }
+      } catch (error) {
+        toast({
+          title: "⚠️ Error inesperado",
+          variant: "destructive",
+        })
+      }
+    }}
+  >
+    Confirmar
+  </Button>
+</DialogFooter>
+
       </DialogContent>
     </Dialog>
   )
