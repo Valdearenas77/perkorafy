@@ -13,12 +13,18 @@ import { useToast } from '@/components/ui/toaster'
 
 interface ConfirmarCanjeDialogProps {
   perkId: number
-  perkNombre: string // 👈 añade esta línea
+  perkNombre: string
   open: boolean
-  setOpen: (open: boolean) => void
+  setOpen: (value: boolean) => void
 }
 
-export default function ConfirmarCanjeDialog({ perkId, open, setOpen }: ConfirmarCanjeDialogProps) {
+export default function ConfirmarCanjeDialog({
+  perkId,
+  perkNombre,
+  open,
+  setOpen,
+}: ConfirmarCanjeDialogProps) {
+
   const { toast } = useToast()
   const [loading, setLoading] = useState(false)
 
