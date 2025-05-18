@@ -21,15 +21,13 @@ export async function POST(req: NextRequest) {
 
     const decoded = verify(token, JWT_SECRET) as { id?: string }
 
-    console.log('🧠 decoded JWT:', decoded)
-
     if (!decoded?.id) {
       return NextResponse.json({ error: 'Token inválido: no contiene id' }, { status: 401 })
     }
 
-    const userId = decoded.id
+    const userId = parseInt(decoded.id)
 
-    const user = await prisma.user.findUnique({ where: { id: Number(userId) } })
+    const user = await prisma.user.findUnique({ where: { id: userId } })
     if (!user) {
       return NextResponse.json({ error: 'Usuario no encontrado' }, { status: 404 })
     }
