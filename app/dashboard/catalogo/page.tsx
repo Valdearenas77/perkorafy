@@ -75,8 +75,8 @@ export default function CatalogoPage() {
               <div className="flex justify-between items-center mt-2">
                 <span className="font-bold text-blue-600">{perk.puntos} perks</span>
                 <ConfirmarCanjeDialog
-                  perkNombre={perk.nombre}
-                  onConfirm={() => alert(`🎉 Has canjeado el beneficio: ${perk.nombre}`)}
+                   perkId={perk.id}
+                   perkNombre={perk.nombre}
                 />
               </div>
             </CardContent>
