@@ -5,6 +5,14 @@ import { prisma } from '@/lib/prisma'
 
 const JWT_SECRET = process.env.JWT_SECRET!
 
+console.log('🟢 Llamada recibida en /api/canjear')
+console.log('🔢 perkId:', perkId)
+console.log('🍪 token:', token)
+console.log('🧠 decoded:', decoded)
+console.log('👤 user:', user)
+console.log('🎁 perk:', perk)
+
+
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json()
