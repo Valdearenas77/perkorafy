@@ -4,7 +4,7 @@
 
 import { useEffect, useState } from 'react'
 import { Card, CardContent, CardHeader } from '@/components/ui/card'
-import { ConfirmarCanjeDialog } from '@/components/ConfirmarCanjeDialog'
+import ConfirmarCanjeDialog from "@/components/ConfirmarCanjeDialog" // ✅ Correcto
 
 
 type Perk = {
