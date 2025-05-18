@@ -3,7 +3,7 @@ import { cookies } from 'next/headers'
 import { verify } from 'jsonwebtoken'
 import { prisma } from '@/lib/prisma'
 
-const JWT_SECRET = process.env.JWT_SECRET!
+const JWT_SECRET = process.env.JWT_SECRET ?? 'clave_super_secreta'
 
 export async function POST(req: NextRequest) {
   try {
