@@ -14,19 +14,12 @@ import { useToast } from '@/components/ui/toaster'
 interface ConfirmarCanjeDialogProps {
   perkId: number
   perkNombre: string
-  open: boolean
-  setOpen: (value: boolean) => void
 }
 
-export default function ConfirmarCanjeDialog({
-  perkId,
-  perkNombre,
-  open,
-  setOpen,
-}: ConfirmarCanjeDialogProps) {
-
-  const { toast } = useToast()
+export default function ConfirmarCanjeDialog({ perkId, perkNombre }: ConfirmarCanjeDialogProps) {
+  const [open, setOpen] = useState(false)
   const [loading, setLoading] = useState(false)
+  const { toast } = useToast()
 
   const handleConfirm = async () => {
     setLoading(true)
@@ -34,7 +27,8 @@ export default function ConfirmarCanjeDialog({
       const res = await fetch('/api/canjear', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ perkId }),
+        credentials: 'include',
+        body: JSON.stringify({ perkId })
       })
 
       const data = await res.json()
