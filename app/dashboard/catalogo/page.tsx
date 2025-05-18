@@ -2,9 +2,9 @@
 
 import { useEffect, useState } from 'react'
 import { Card, CardContent, CardHeader } from '@/components/ui/card'
-import ConfirmarCanjeDialog from '@/components/ConfirmarCanjeDialog'
+import ConfirmarCanjeDialog from "@/components/ConfirmarCanjeDialog"
 
-interface Perk {
+type Perk = {
   id: number
   nombre: string
   descripcion: string
@@ -37,7 +37,7 @@ const perks: Perk[] = [
 ]
 
 export default function CatalogoPage() {
-  const [usuario, setUsuario] = useState('')
+  const [usuario, setUsuario] = useState("")
   const [perksUsuario, setPerksUsuario] = useState<number | null>(null)
 
   useEffect(() => {
@@ -52,15 +52,11 @@ export default function CatalogoPage() {
 
   return (
     <div className="min-h-screen bg-gray-100 p-6">
-      <a href="/dashboard" className="inline-flex items-center text-blue-600 hover:underline mb-4">
-        ← Volver al panel
-      </a>
+      <a href="/dashboard"
+         className="inline-flex items-center text-blue-600 hover:underline mb-4">
+         ← Volver al panel
+     </a>
       <h1 className="text-2xl font-bold mb-6 text-center">🎁 Catálogo de beneficios</h1>
-      {perksUsuario !== null && (
-        <p className="text-center text-lg font-medium text-gray-700 mb-6">
-          Tienes <span className="text-blue-600 font-bold">{perksUsuario}</span> perks disponibles
-        </p>
-      )}
       <div className="grid gap-6 grid-cols-1 sm:grid-cols-2 md:grid-cols-3">
         {perks.map(perk => (
           <Card key={perk.id} className="rounded-xl shadow-md hover:shadow-lg transition">
@@ -78,7 +74,7 @@ export default function CatalogoPage() {
                     perkNombre={perk.nombre}
                   />
                 ) : (
-                  <span className="text-sm text-red-500">Insuficientes</span>
+                  <span className="text-xs text-red-500">Perks insuficientes</span>
                 )}
               </div>
             </CardContent>
@@ -88,6 +84,3 @@ export default function CatalogoPage() {
     </div>
   )
 }
-
-
-
