@@ -1,84 +1,93 @@
 "use client"
 
-import { useState } from 'react'
-import {
-  Dialog,
-  DialogContent,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle
-} from '@/components/ui/dialog'
-import { Button } from '@/components/ui/button'
-import { useToast } from '@/components/ui/toaster'
+import { useEffect, useState } from 'react'
+import { Card, CardContent, CardHeader } from '@/components/ui/card'
+import ConfirmarCanjeDialog from '@/components/ConfirmarCanjeDialog'
 
-interface ConfirmarCanjeDialogProps {
-  perkId: number
-  perkNombre: string
+interface Perk {
+  id: number
+  nombre: string
+  descripcion: string
+  puntos: number
+  imagen: string
 }
 
-export default function ConfirmarCanjeDialog({ perkId, perkNombre }: ConfirmarCanjeDialogProps) {
-  const [open, setOpen] = useState(false)
-  const [loading, setLoading] = useState(false)
-  const { toast } = useToast()
+const perks: Perk[] = [
+  {
+    id: 1,
+    nombre: 'Día libre',
+    descripcion: 'Disfruta de un día libre adicional',
+    puntos: 200,
+    imagen: '/perks/dia-libre.png',
+  },
+  {
+    id: 2,
+    nombre: 'Vale Amazon 50€',
+    descripcion: 'Tarjeta regalo de Amazon valorada en 50€',
+    puntos: 500,
+    imagen: '/perks/amazon-50.png',
+  },
+  {
+    id: 3,
+    nombre: 'Entrada cine',
+    descripcion: '2 entradas para el cine',
+    puntos: 150,
+    imagen: '/perks/cine.png',
+  },
+]
 
-  const handleConfirm = async () => {
-    setLoading(true)
-    try {
-      const res = await fetch('/api/canjear', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        credentials: 'include',
-        body: JSON.stringify({ perkId })
+export default function CatalogoPage() {
+  const [usuario, setUsuario] = useState('')
+  const [perksUsuario, setPerksUsuario] = useState<number | null>(null)
+
+  useEffect(() => {
+    fetch('/api/user', { credentials: 'include' })
+      .then(res => res.ok ? res.json() : Promise.reject())
+      .then(data => {
+        setUsuario(data.name)
+        setPerksUsuario(data.perks)
       })
-
-      const data = await res.json()
-
-      if (res.ok) {
-        toast({ title: '🎉 Canje exitoso' })
-        setOpen(false)
-      } else {
-        toast({
-          title: '⚠️ Error al canjear',
-          description: data.error || 'No se pudo completar el canje.',
-          variant: 'destructive'
-        })
-      }
-    } catch (error) {
-      toast({
-        title: '⚠️ Error inesperado',
-        description: 'No se pudo procesar el canje.',
-        variant: 'destructive'
-      })
-    } finally {
-      setLoading(false)
-    }
-  }
+      .catch(() => window.location.href = '/login')
+  }, [])
 
   return (
-    <>
-      <Button onClick={() => setOpen(true)} variant="default">
-        Canjear
-      </Button>
-      <Dialog open={open} onOpenChange={setOpen}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>¿Confirmar canje?</DialogTitle>
-          </DialogHeader>
-          <p>¿Estás seguro de que deseas canjear el perk: <strong>{perkNombre}</strong>?</p>
-          <DialogFooter className="mt-4">
-            <Button variant="outline" onClick={() => setOpen(false)}>
-              Cancelar
-            </Button>
-            <Button onClick={handleConfirm} disabled={loading}>
-              Confirmar
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
-    </>
+    <div className="min-h-screen bg-gray-100 p-6">
+      <a href="/dashboard" className="inline-flex items-center text-blue-600 hover:underline mb-4">
+        ← Volver al panel
+      </a>
+      <h1 className="text-2xl font-bold mb-6 text-center">🎁 Catálogo de beneficios</h1>
+      {perksUsuario !== null && (
+        <p className="text-center text-lg font-medium text-gray-700 mb-6">
+          Tienes <span className="text-blue-600 font-bold">{perksUsuario}</span> perks disponibles
+        </p>
+      )}
+      <div className="grid gap-6 grid-cols-1 sm:grid-cols-2 md:grid-cols-3">
+        {perks.map(perk => (
+          <Card key={perk.id} className="rounded-xl shadow-md hover:shadow-lg transition">
+            <CardHeader className="p-4">
+              <img src={perk.imagen} alt={perk.nombre} className="w-full h-40 object-cover rounded-md" />
+            </CardHeader>
+            <CardContent className="px-4 pb-4 space-y-2">
+              <h2 className="text-lg font-semibold">{perk.nombre}</h2>
+              <p className="text-sm text-gray-600">{perk.descripcion}</p>
+              <div className="flex justify-between items-center mt-2">
+                <span className="font-bold text-blue-600">{perk.puntos} perks</span>
+                {perksUsuario !== null && perksUsuario >= perk.puntos ? (
+                  <ConfirmarCanjeDialog
+                    perkId={perk.id}
+                    perkNombre={perk.nombre}
+                  />
+                ) : (
+                  <span className="text-sm text-red-500">Insuficientes</span>
+                )}
+              </div>
+            </CardContent>
+          </Card>
+        ))}
+      </div>
+    </div>
   )
 }
-
 
 
 
