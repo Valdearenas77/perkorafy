@@ -47,10 +47,9 @@ export default function ConfirmarCanjeDialog({
       }
     } catch (error) {
       toast({
-        title: "⚠️ Error inesperado",
-        description: "No se pudo procesar el canje.",
-        variant: "destructive",
-      })
+         title: "⚠️ Error inesperado: No se pudo procesar el canje.",
+         variant: "destructive",
+        })
     }
   }
 
