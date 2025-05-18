@@ -1,33 +1,32 @@
-"use client"
+'use client'
 
-import { useState } from "react"
+import { useState } from 'react'
 import {
   Dialog,
   DialogContent,
-  DialogDescription,
   DialogFooter,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog"
-import { Button } from "@/components/ui/button"
-import { useToast } from "@/components/ui/toaster"
+} from '@/components/ui/dialog'
+import { Button } from '@/components/ui/button'
+import { useToast } from '@/components/ui/toaster'
 
 interface ConfirmarCanjeDialogProps {
   perkId: number
-  perkNombre: string
+  open: boolean
+  setOpen: (open: boolean) => void
 }
 
-export default function ConfirmarCanjeDialog({ perkId, perkNombre }: ConfirmarCanjeDialogProps) {
-  const [open, setOpen] = useState(false)
+export default function ConfirmarCanjeDialog({ perkId, open, setOpen }: ConfirmarCanjeDialogProps) {
   const { toast } = useToast()
+  const [loading, setLoading] = useState(false)
 
   const handleConfirm = async () => {
+    setLoading(true)
     try {
-      const res = await fetch("/api/canjear", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        credentials: "include", // 👈 MUY IMPORTANTE para que se envíen cookies
+      const res = await fetch('/api/canjear', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ perkId }),
       })
 
@@ -35,50 +34,45 @@ export default function ConfirmarCanjeDialog({ perkId, perkNombre }: ConfirmarCa
 
       if (res.ok) {
         toast({
-          title: "🎉 Canje exitoso",
+          title: '🎉 Canje exitoso',
         })
         setOpen(false)
+      } else if (res.status === 403) {
+        toast({
+          title: '❌ Perks insuficientes',
+          variant: 'destructive',
+        })
       } else {
         toast({
-          title: "⚠️ Error al canjear",
-          description: data.error || "No se pudo completar el canje.",
-          variant: "destructive",
+          title: '⚠️ Error al canjear',
+          description: data.error || 'No se pudo completar el canje.',
+          variant: 'destructive',
         })
       }
     } catch (error) {
+      console.error('Error inesperado:', error)
       toast({
-        title: "❌ Error inesperado",
-        description: "Inténtalo más tarde.",
-        variant: "destructive",
+        title: '⚠️ Error inesperado',
+        description: 'No se pudo procesar el canje.',
+        variant: 'destructive',
       })
+    } finally {
+      setLoading(false)
     }
   }
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger asChild>
-        <Button className="bg-blue-600 hover:bg-blue-700 text-white text-sm">
-          Canjear
-        </Button>
-      </DialogTrigger>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Confirmar canje</DialogTitle>
-          <DialogDescription>
-            ¿Seguro que quieres canjear el beneficio <strong>{perkNombre}</strong>?
-          </DialogDescription>
+          <DialogTitle>¿Confirmar canje?</DialogTitle>
         </DialogHeader>
-        <DialogFooter className="mt-4 flex flex-row justify-end gap-2">
-          <Button
-            className="bg-red-600 hover:bg-red-700 text-white"
-            onClick={() => setOpen(false)}
-          >
+        <p>¿Estás seguro de que deseas canjear este perk?</p>
+        <DialogFooter className="mt-4">
+          <Button variant="outline" onClick={() => setOpen(false)}>
             Cancelar
           </Button>
-          <Button
-            className="bg-blue-600 hover:bg-blue-700 text-white"
-            onClick={handleConfirm}
-          >
+          <Button onClick={handleConfirm} disabled={loading}>
             Confirmar
           </Button>
         </DialogFooter>
