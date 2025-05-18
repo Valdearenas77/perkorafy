@@ -33,17 +33,17 @@ export default function ConfirmarCanjeDialog({
       const data = await res.json()
 
       if (res.ok) {
-        toast({
-          title: "🎉 Canje exitoso",
-          description: data.message,
+         toast({
+           title: `🎉 Canje exitoso: ${data.message}`
         })
+
         setOpen(false)
       } else {
         toast({
-          title: "❌ Error al canjear",
-          description: data.error,
+          title: `❌ Error al canjear: ${data.error}`,
           variant: "destructive",
         })
+
       }
     } catch (error) {
       toast({
