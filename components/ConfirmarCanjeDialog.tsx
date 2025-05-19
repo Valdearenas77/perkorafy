@@ -63,23 +63,30 @@ export default function ConfirmarCanjeDialog({ perkId, perkNombre }: ConfirmarCa
   }
 
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
-      <Button onClick={() => setOpen(true)}>Canjear</Button>
+<Dialog open={open} onOpenChange={setOpen}>
+  <Button
+    onClick={() => setOpen(true)}
+    variant="default"
+    className="w-full"
+  >
+    Canjear
+  </Button>
 
-      <DialogContent>
-        <DialogHeader>
-          <DialogTitle>¿Confirmar canje?</DialogTitle>
-        </DialogHeader>
-        <p>¿Estás seguro de que deseas canjear el perk: <strong>{perkNombre}</strong>?</p>
-        <DialogFooter className="mt-4">
-          <Button variant="outline" onClick={() => setOpen(false)}>
-            Cancelar
-          </Button>
-          <Button onClick={handleConfirm} disabled={loading}>
-            Confirmar
-          </Button>
-        </DialogFooter>
-      </DialogContent>
-    </Dialog>
+  <DialogContent>
+    <DialogHeader>
+      <DialogTitle>¿Confirmar canje?</DialogTitle>
+    </DialogHeader>
+    <p>¿Estás seguro de que deseas canjear el perk: <strong>{perkNombre}</strong>?</p>
+    <DialogFooter className="mt-4">
+      <Button variant="outline" onClick={() => setOpen(false)}>
+        Cancelar
+      </Button>
+      <Button onClick={handleConfirm} disabled={loading}>
+        Confirmar
+      </Button>
+    </DialogFooter>
+  </DialogContent>
+</Dialog>
+
   )
 }
