@@ -64,6 +64,8 @@ export default function ConfirmarCanjeDialog({ perkId, perkNombre }: ConfirmarCa
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
+      <Button onClick={() => setOpen(true)}>Canjear</Button>
+
       <DialogContent>
         <DialogHeader>
           <DialogTitle>¿Confirmar canje?</DialogTitle>
