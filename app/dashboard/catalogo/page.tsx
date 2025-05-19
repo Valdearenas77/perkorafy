@@ -44,6 +44,7 @@ export default function CatalogoPage() {
     fetch('/api/user', { credentials: 'include' })
       .then(res => res.ok ? res.json() : Promise.reject())
       .then(data => {
+        console.log('Datos del usuario:', data)
         setUsuario(data.name || "")
         setPerksUsuario(data.perks ?? 0)
       })
@@ -56,7 +57,16 @@ export default function CatalogoPage() {
          className="inline-flex items-center text-blue-600 hover:underline mb-4">
          ← Volver al panel
       </a>
-      <h1 className="text-2xl font-bold mb-6 text-center">🎁 Catálogo de beneficios</h1>
+      <h1 className="text-2xl font-bold mb-2 text-center">🎁 Catálogo de beneficios</h1>
+
+      {perksUsuario === null ? (
+        <p className="text-center text-sm text-gray-500 mb-6">Cargando perks disponibles...</p>
+      ) : (
+        <p className="text-center text-gray-700 mb-6">
+          Tienes <span className="font-semibold">{perksUsuario}</span> perks disponibles
+        </p>
+      )}
+
       <div className="grid gap-6 grid-cols-1 sm:grid-cols-2 md:grid-cols-3">
         {perks.map(perk => (
           <Card key={perk.id} className="rounded-xl shadow-md hover:shadow-lg transition">
