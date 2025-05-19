@@ -64,25 +64,35 @@ export default function ConfirmarCanjeDialog({ perkId, perkNombre }: ConfirmarCa
 
   return (
 <Dialog open={open} onOpenChange={setOpen}>
-  <Button onClick={() => setOpen(true)} variant="default">
-    Canjear
-  </Button>
+      <button
+        onClick={() => setOpen(true)}
+        className="bg-red-600 text-white text-sm px-4 py-1.5 rounded-md hover:bg-red-700 transition"
+      >
+        Canjear
+      </button>
 
-  <DialogContent>
-    <DialogHeader>
-      <DialogTitle>¿Confirmar canje?</DialogTitle>
-    </DialogHeader>
-    <p>¿Estás seguro de que deseas canjear el perk: <strong>{perkNombre}</strong>?</p>
-    <DialogFooter className="mt-4">
-      <Button variant="outline" onClick={() => setOpen(false)}>
-        Cancelar
-      </Button>
-      <Button onClick={handleConfirm} disabled={loading}>
-        Confirmar
-      </Button>
-    </DialogFooter>
-  </DialogContent>
-</Dialog>
+      <DialogContent>
+        <DialogHeader>
+          <DialogTitle>¿Confirmar canje?</DialogTitle>
+        </DialogHeader>
+        <p>¿Estás seguro de que deseas canjear el perk: <strong>{perkNombre}</strong>?</p>
+        <DialogFooter className="mt-4">
+          <button
+            onClick={() => setOpen(false)}
+            className="bg-gray-200 text-gray-800 text-sm px-4 py-1.5 rounded-md hover:bg-gray-300 transition"
+          >
+            Cancelar
+          </button>
+          <button
+            onClick={handleConfirm}
+            disabled={loading}
+            className="bg-red-600 text-white text-sm px-4 py-1.5 rounded-md hover:bg-red-700 transition disabled:opacity-50"
+          >
+            Confirmar
+          </button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
 
 
   )
