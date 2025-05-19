@@ -64,11 +64,7 @@ export default function ConfirmarCanjeDialog({ perkId, perkNombre }: ConfirmarCa
 
   return (
 <Dialog open={open} onOpenChange={setOpen}>
-  <Button
-    onClick={() => setOpen(true)}
-    variant="default"
-    className="w-full"
-  >
+  <Button onClick={() => setOpen(true)} variant="default">
     Canjear
   </Button>
 
@@ -87,6 +83,7 @@ export default function ConfirmarCanjeDialog({ perkId, perkNombre }: ConfirmarCa
     </DialogFooter>
   </DialogContent>
 </Dialog>
+
 
   )
 }
