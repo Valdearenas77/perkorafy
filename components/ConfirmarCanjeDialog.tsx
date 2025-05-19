@@ -63,10 +63,10 @@ export default function ConfirmarCanjeDialog({ perkId, perkNombre }: ConfirmarCa
   }
 
   return (
-<Dialog open={open} onOpenChange={setOpen}>
+    <Dialog open={open} onOpenChange={setOpen}>
       <button
         onClick={() => setOpen(true)}
-        className="bg-red-600 text-white text-sm px-4 py-1.5 rounded-md hover:bg-red-700 transition"
+        className="bg-blue-600 text-white text-sm px-4 py-1.5 rounded-md hover:bg-blue-700 transition"
       >
         Canjear
       </button>
@@ -86,7 +86,7 @@ export default function ConfirmarCanjeDialog({ perkId, perkNombre }: ConfirmarCa
           <button
             onClick={handleConfirm}
             disabled={loading}
-            className="bg-red-600 text-white text-sm px-4 py-1.5 rounded-md hover:bg-red-700 transition disabled:opacity-50"
+            className="bg-blue-600 text-white text-sm px-4 py-1.5 rounded-md hover:bg-blue-700 transition disabled:opacity-50"
           >
             Confirmar
           </button>
