@@ -15,6 +15,8 @@ export default function PerfilUsuario() {
   const [nombreEditable, setNombreEditable] = useState<string>('')
   const [editando, setEditando] = useState(false)
   const [loading, setLoading] = useState(true)
+  const [guardando, setGuardando] = useState(false)
+  const [errorMsg, setErrorMsg] = useState<string | null>(null)
 
   useEffect(() => {
     const fetchPerfil = async () => {
@@ -33,14 +35,36 @@ export default function PerfilUsuario() {
     fetchPerfil()
   }, [])
 
-  const handleToggleEditar = () => {
+  const handleToggleEditar = async () => {
     if (!editando) {
       setEditando(true)
+      setErrorMsg(null)
     } else {
-      // Aquí más adelante haremos PUT para guardar cambios
-      console.log('Guardar nuevo nombre:', nombreEditable)
-      setEditando(false)
-      if (perfil) setPerfil({ ...perfil, name: nombreEditable })
+      setGuardando(true)
+      setErrorMsg(null)
+
+      try {
+        const res = await fetch('/api/user/perfil', {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ name: nombreEditable }),
+        })
+
+        const result = await res.json()
+
+        if (!res.ok) {
+          throw new Error(result.error || 'Error al actualizar el nombre')
+        }
+
+        if (perfil) {
+          setPerfil({ ...perfil, name: result.user.name })
+        }
+        setEditando(false)
+      } catch (error: any) {
+        setErrorMsg(error.message || 'Error inesperado')
+      } finally {
+        setGuardando(false)
+      }
     }
   }
 
@@ -87,13 +111,16 @@ export default function PerfilUsuario() {
             })}
           </div>
 
+          {errorMsg && <p className="text-red-600 text-sm">{errorMsg}</p>}
+
           <div className="pt-4 flex justify-end">
             <button
               onClick={handleToggleEditar}
-              className="bg-blue-600 text-white text-sm px-4 py-1.5 rounded-md hover:bg-blue-700 transition flex items-center gap-1"
+              disabled={guardando}
+              className="bg-blue-600 text-white text-sm px-4 py-1.5 rounded-md hover:bg-blue-700 transition flex items-center gap-1 disabled:opacity-50"
             >
               {editando ? <Save className="w-4 h-4" /> : <Pencil className="w-4 h-4" />}
-              {editando ? 'Guardar' : 'Modificar'}
+              {editando ? (guardando ? 'Guardando...' : 'Guardar') : 'Modificar'}
             </button>
           </div>
         </div>
