@@ -1,8 +1,7 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import { ArrowLeft, LogOut } from 'lucide-react'
-import { useRouter } from 'next/navigation'
+import { ArrowLeft, Pencil, Save } from 'lucide-react'
 
 type Perfil = {
   name: string
@@ -13,15 +12,17 @@ type Perfil = {
 
 export default function PerfilUsuario() {
   const [perfil, setPerfil] = useState<Perfil | null>(null)
+  const [nombreEditable, setNombreEditable] = useState<string>('')
+  const [editando, setEditando] = useState(false)
   const [loading, setLoading] = useState(true)
-  const router = useRouter()
 
   useEffect(() => {
     const fetchPerfil = async () => {
       try {
-        const res = await fetch('/api/user/perks')
+        const res = await fetch('/api/user/perfil')
         const data = await res.json()
         setPerfil(data)
+        setNombreEditable(data.name)
       } catch (error) {
         console.error('Error al cargar el perfil', error)
       } finally {
@@ -32,9 +33,15 @@ export default function PerfilUsuario() {
     fetchPerfil()
   }, [])
 
-  const handleLogout = async () => {
-    await fetch('/api/logout', { method: 'POST' })
-    router.push('/login')
+  const handleToggleEditar = () => {
+    if (!editando) {
+      setEditando(true)
+    } else {
+      // Aquí más adelante haremos PUT para guardar cambios
+      console.log('Guardar nuevo nombre:', nombreEditable)
+      setEditando(false)
+      if (perfil) setPerfil({ ...perfil, name: nombreEditable })
+    }
   }
 
   return (
@@ -54,7 +61,16 @@ export default function PerfilUsuario() {
       ) : perfil ? (
         <div className="border rounded-md p-6 shadow-sm space-y-4 text-sm text-gray-800 bg-white">
           <div>
-            <span className="font-medium text-gray-700">Nombre:</span> {perfil.name}
+            <label className="block text-gray-700 font-medium mb-1">Nombre:</label>
+            <input
+              type="text"
+              disabled={!editando}
+              value={nombreEditable}
+              onChange={(e) => setNombreEditable(e.target.value)}
+              className={`w-full border px-3 py-1 rounded-md text-sm ${
+                editando ? 'bg-white' : 'bg-gray-100 text-gray-500'
+              }`}
+            />
           </div>
           <div>
             <span className="font-medium text-gray-700">Correo electrónico:</span> {perfil.email}
@@ -73,11 +89,11 @@ export default function PerfilUsuario() {
 
           <div className="pt-4 flex justify-end">
             <button
-              onClick={handleLogout}
+              onClick={handleToggleEditar}
               className="bg-blue-600 text-white text-sm px-4 py-1.5 rounded-md hover:bg-blue-700 transition flex items-center gap-1"
             >
-              <LogOut className="w-4 h-4" />
-              Cerrar sesión
+              {editando ? <Save className="w-4 h-4" /> : <Pencil className="w-4 h-4" />}
+              {editando ? 'Guardar' : 'Modificar'}
             </button>
           </div>
         </div>
