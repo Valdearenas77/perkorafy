@@ -38,7 +38,7 @@ export default function Catalogo() {
 
   const fetchUserPerks = async () => {
     try {
-      const res = await fetch('/api/user/perks')
+      const res = await fetch('/api/perks')
       const data = await res.json()
       setUserPerks(data.perks)
     } catch (error) {
