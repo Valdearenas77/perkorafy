@@ -15,6 +15,8 @@ type Canje = {
 
 export default function Historial() {
   const [canjes, setCanjes] = useState<Canje[]>([])
+  const [filtroDesde, setFiltroDesde] = useState<string>('')
+  const [filtroHasta, setFiltroHasta] = useState<string>('')
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
@@ -33,6 +35,17 @@ export default function Historial() {
     fetchCanjes()
   }, [])
 
+  // Aplicar filtro por fecha
+  const canjesFiltrados = canjes.filter((canje) => {
+    const fecha = new Date(canje.fecha)
+    const desde = filtroDesde ? new Date(filtroDesde) : null
+    const hasta = filtroHasta ? new Date(filtroHasta) : null
+
+    if (desde && fecha < desde) return false
+    if (hasta && fecha > hasta) return false
+    return true
+  })
+
   return (
     <div className="p-6 max-w-3xl mx-auto">
       <button
@@ -45,13 +58,35 @@ export default function Historial() {
 
       <h1 className="text-2xl font-bold mb-4 text-center">Historial de canjes</h1>
 
+      {/* Filtros por fecha */}
+      <div className="flex flex-col sm:flex-row items-center gap-4 mb-6 justify-center">
+        <div>
+          <label className="block text-sm text-gray-700 mb-1">Desde:</label>
+          <input
+            type="date"
+            value={filtroDesde}
+            onChange={(e) => setFiltroDesde(e.target.value)}
+            className="border rounded-md px-2 py-1 text-sm"
+          />
+        </div>
+        <div>
+          <label className="block text-sm text-gray-700 mb-1">Hasta:</label>
+          <input
+            type="date"
+            value={filtroHasta}
+            onChange={(e) => setFiltroHasta(e.target.value)}
+            className="border rounded-md px-2 py-1 text-sm"
+          />
+        </div>
+      </div>
+
       {loading ? (
         <p className="text-center text-gray-500">Cargando historial...</p>
-      ) : canjes.length === 0 ? (
-        <p className="text-center text-gray-500">Aún no has canjeado ningún beneficio.</p>
+      ) : canjesFiltrados.length === 0 ? (
+        <p className="text-center text-gray-500">No hay canjes en este rango de fechas.</p>
       ) : (
         <ul className="space-y-4">
-          {canjes.map((canje) => (
+          {canjesFiltrados.map((canje) => (
             <li
               key={canje.id}
               className="border rounded-md p-4 shadow-sm flex justify-between items-start"
