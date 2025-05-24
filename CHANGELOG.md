@@ -53,3 +53,23 @@ Historial de cambios del proyecto Perkorafy.
 - Manejo robusto de errores en el cliente y en los endpoints.
 - Validación de sesión JWT en la API de usuario.
 - Código refactorizado y limpio, preparado para animaciones o evoluciones futuras.
+
+
+### 📜 Historial de canjes del usuario
+
+#### ✨ Nuevas funcionalidades:
+- Pantalla `/dashboard/historial` con listado de todos los canjes realizados por el usuario.
+- Visualización de:
+  - Fecha del canje (formateada en español)
+  - Nombre del beneficio
+  - Coste en perks
+  - Estado del canje
+
+#### 🔎 Funcionalidades añadidas:
+- Filtro visual por rango de fechas: selección de `Desde` y `Hasta` permite limitar el listado de canjes.
+- Inclusión automática de los días seleccionados gracias a ajuste horario.
+- Comportamiento inmediato sin necesidad de botón de aplicar filtro.
+
+#### ✅ Estabilidad:
+- Filtro aplicado desde frontend sobre datos precargados.
+- Comprobación robusta de fechas para evitar exclusión errónea de canjes en el mismo día.
