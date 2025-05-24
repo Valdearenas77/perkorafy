@@ -29,7 +29,7 @@ export default function Catalogo() {
       const data = await res.json()
       setPerks(data)
     } catch (error) {
-      toast.error('No se pudieron cargar los perks')
+      toast.error('No se pudieron cargar los beneficios')
       console.error(error)
     } finally {
       setIsLoading(false)
@@ -38,11 +38,13 @@ export default function Catalogo() {
 
   const fetchUserPerks = async () => {
     try {
-      const res = await fetch('/api/perks')
+      const res = await fetch('/api/user/perks')
+      if (!res.ok) throw new Error()
       const data = await res.json()
       setUserPerks(data.perks)
     } catch (error) {
       console.error("Error al obtener perks del usuario")
+      setUserPerks(0) // fallback para evitar errores de renderizado
     }
   }
 
