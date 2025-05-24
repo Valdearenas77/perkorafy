@@ -38,8 +38,8 @@ export default function Historial() {
   // Aplicar filtro por fecha
   const canjesFiltrados = canjes.filter((canje) => {
     const fecha = new Date(canje.fecha)
-    const desde = filtroDesde ? new Date(filtroDesde) : null
-    const hasta = filtroHasta ? new Date(filtroHasta) : null
+    const desde = filtroDesde ? new Date(filtroDesde + 'T00:00:00') : null
+    const hasta = filtroHasta ? new Date(filtroHasta + 'T23:59:59') : null
 
     if (desde && fecha < desde) return false
     if (hasta && fecha > hasta) return false
