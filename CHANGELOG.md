@@ -73,3 +73,21 @@ Historial de cambios del proyecto Perkorafy.
 #### ✅ Estabilidad:
 - Filtro aplicado desde frontend sobre datos precargados.
 - Comprobación robusta de fechas para evitar exclusión errónea de canjes en el mismo día.
+
+### 👤 Perfil de usuario editable
+
+#### ✨ Nuevas funcionalidades:
+- Pantalla `/dashboard/perfil` que muestra:
+  - Nombre
+  - Correo electrónico
+  - Perks disponibles
+  - Fecha de alta
+- Campo de nombre editable al pulsar el botón "Modificar".
+- Al guardar, se actualiza el nombre del usuario en base de datos vía API (`PUT /api/user/perfil`).
+- Validación del token para proteger el acceso y actualización del perfil.
+- Estilo visual unificado con el resto del dashboard.
+
+#### ✅ Estabilidad:
+- Campo de nombre desactivado por defecto para evitar ediciones accidentales.
+- Mensajes de error visuales si la actualización falla.
+- Botón "Guardar" deshabilitado mientras se está enviando el cambio.
