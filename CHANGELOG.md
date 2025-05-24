@@ -30,3 +30,26 @@ Historial de cambios del proyecto Perkorafy.
 - Estructura inicial del proyecto con Next.js, Tailwind, shadcn/ui y routing básico.
 - Creación de páginas base: login, dashboard, catálogo.
 - Primer prototipo funcional de canje de beneficios.
+
+
+## ✅ Versión estable – 2025-05-24
+
+### 🎯 Catálogo de beneficios funcional en `/dashboard/catalogo`
+
+#### ✨ Nuevas funcionalidades:
+- Visualización completa del catálogo con datos desde `/api/perks`.
+- Carga dinámica del número de perks disponibles del usuario desde `/api/user/perks`.
+- Confirmación visual antes de canjear un perk.
+- Feedback mediante `toast` al confirmar o fallar el canje.
+- Actualización automática del catálogo y de los perks disponibles tras cada canje.
+
+#### 🛠 Mejoras de UX:
+- Beneficios no canjeables aparecen desactivados y con estilo atenuado.
+- Botón "Canjear" se desactiva automáticamente si el usuario no tiene suficientes puntos.
+- Se muestra el mensaje: *"No tienes suficientes perks"* bajo los beneficios inactivos.
+- Diseño responsive adaptado a desktop y dispositivos móviles.
+
+#### ✅ Estabilidad:
+- Manejo robusto de errores en el cliente y en los endpoints.
+- Validación de sesión JWT en la API de usuario.
+- Código refactorizado y limpio, preparado para animaciones o evoluciones futuras.
