@@ -43,7 +43,7 @@ const handleLogout = async () => {
         </CardHeader>
         <CardContent className="px-6 pb-6 space-y-4">
           <div className="grid gap-3">
-            <a className="block bg-blue-100 text-blue-900 font-medium px-4 py-2 rounded-md hover:bg-blue-200 transition" href="#">
+            <a className="block bg-blue-100 text-blue-900 font-medium px-4 py-2 rounded-md hover:bg-blue-200 transition" href="/dashboard/perfil">
               👤 Perfil de usuario
             </a>
             <a className="block bg-blue-100 text-blue-900 font-medium px-4 py-2 rounded-md hover:bg-blue-200 transition" href="#">
