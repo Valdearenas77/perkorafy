@@ -1,96 +1,103 @@
-"use client"
+'use client'
 
 import { useEffect, useState } from 'react'
-import { Card, CardContent, CardHeader } from '@/components/ui/card'
-import ConfirmarCanjeDialog from "@/components/ConfirmarCanjeDialog"
+import { toast } from 'sonner'
+import { Dialog, DialogContent, DialogHeader } from '@/components/ui/dialog'
+import { Button } from '@/components/ui/button'
 
 type Perk = {
-  id: number
+  id: string
   nombre: string
   descripcion: string
-  puntos: number
-  imagen: string
+  coste: number
 }
 
-const perks: Perk[] = [
-  {
-    id: 1,
-    nombre: 'Día libre',
-    descripcion: 'Disfruta de un día libre adicional',
-    puntos: 200,
-    imagen: '/perks/dia-libre.png',
-  },
-  {
-    id: 2,
-    nombre: 'Vale Amazon 50€',
-    descripcion: 'Tarjeta regalo de Amazon valorada en 50€',
-    puntos: 500,
-    imagen: '/perks/amazon-50.png',
-  },
-  {
-    id: 3,
-    nombre: 'Entrada cine',
-    descripcion: '2 entradas para el cine',
-    puntos: 150,
-    imagen: '/perks/cine.png',
-  },
-]
+export default function Catalogo() {
+  const [perks, setPerks] = useState<Perk[]>([])
+  const [selectedPerk, setSelectedPerk] = useState<Perk | null>(null)
+  const [loading, setLoading] = useState(false)
+  const [dialogOpen, setDialogOpen] = useState(false)
 
-export default function CatalogoPage() {
-  const [usuario, setUsuario] = useState("")
-  const [perksUsuario, setPerksUsuario] = useState<number | null>(null)
+  const fetchPerks = async () => {
+    const res = await fetch('/api/perks')
+    const data = await res.json()
+    setPerks(data)
+  }
 
   useEffect(() => {
-    fetch('/api/user', { credentials: 'include' })
-      .then(res => res.ok ? res.json() : Promise.reject())
-      .then(data => {
-        console.log('Datos del usuario:', data)
-        setUsuario(data.name || "")
-        setPerksUsuario(data.perks ?? 0)
-      })
-      .catch(() => window.location.href = '/login')
+    fetchPerks()
   }, [])
 
+  const handleCanjear = (perk: Perk) => {
+    setSelectedPerk(perk)
+    setDialogOpen(true)
+  }
+
+  const confirmCanje = async () => {
+    if (!selectedPerk) return
+    setLoading(true)
+
+    const res = await fetch('/api/canjear', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ perkId: selectedPerk.id }),
+    })
+
+    if (res.ok) {
+      toast.success('Perk canjeado correctamente')
+      setDialogOpen(false)
+      await fetchPerks() // actualizar perks disponibles
+    } else {
+      toast.error('No se pudo canjear el perk')
+    }
+
+    setLoading(false)
+  }
+
   return (
-    <div className="min-h-screen bg-gray-100 p-6">
-      <a href="/dashboard"
-         className="inline-flex items-center text-blue-600 hover:underline mb-4">
-         ← Volver al panel
-      </a>
-      <h1 className="text-2xl font-bold mb-2 text-center">🎁 Catálogo de beneficios</h1>
+    <div className="p-6 max-w-4xl mx-auto">
+      <h1 className="text-2xl font-bold mb-4">Catálogo de beneficios</h1>
 
-      {perksUsuario === null ? (
-        <p className="text-center text-sm text-gray-500 mb-6">Cargando perks disponibles...</p>
-      ) : (
-        <p className="text-center text-gray-700 mb-6">
-          Tienes <span className="font-semibold">{perksUsuario}</span> perks disponibles
-        </p>
-      )}
-
-      <div className="grid gap-6 grid-cols-1 sm:grid-cols-2 md:grid-cols-3">
-        {perks.map(perk => (
-          <Card key={perk.id} className="rounded-xl shadow-md hover:shadow-lg transition">
-            <CardHeader className="p-4">
-              <img src={perk.imagen} alt={perk.nombre} className="w-full h-40 object-cover rounded-md" />
-            </CardHeader>
-            <CardContent className="px-4 pb-4 space-y-2">
-              <h2 className="text-lg font-semibold">{perk.nombre}</h2>
-              <p className="text-sm text-gray-600">{perk.descripcion}</p>
-              <div className="flex justify-between items-center mt-2">
-                <span className="font-bold text-blue-600">{perk.puntos} perks</span>
-                {perksUsuario !== null && perksUsuario >= perk.puntos ? (
-                  <ConfirmarCanjeDialog
-                    perkId={perk.id}
-                    perkNombre={perk.nombre}
-                  />
-                ) : (
-                  <span className="text-xs text-red-500">Perks insuficientes</span>
-                )}
-              </div>
-            </CardContent>
-          </Card>
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+        {perks.map((perk) => (
+          <div key={perk.id} className="border rounded-md p-4 shadow-sm">
+            <h2 className="font-semibold text-lg">{perk.nombre}</h2>
+            <p className="text-sm text-gray-600 mb-2">{perk.descripcion}</p>
+            <p className="text-sm font-bold mb-3">Coste: {perk.coste} perks</p>
+            <Button
+              onClick={() => handleCanjear(perk)}
+              className="bg-blue-600 text-white text-sm px-4 py-1.5 rounded-md hover:bg-blue-700 transition"
+            >
+              Canjear
+            </Button>
+          </div>
         ))}
       </div>
+
+      <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
+        <DialogContent>
+          <DialogHeader>¿Confirmar canje?</DialogHeader>
+          <p className="text-sm">
+            ¿Seguro que quieres canjear <strong>{selectedPerk?.nombre}</strong> por{' '}
+            <strong>{selectedPerk?.coste}</strong> puntos?
+          </p>
+          <div className="mt-4 flex justify-end gap-2">
+            <Button
+              onClick={() => setDialogOpen(false)}
+              className="bg-gray-300 text-sm px-4 py-1.5 rounded-md hover:bg-gray-400 transition"
+            >
+              Cancelar
+            </Button>
+            <Button
+              onClick={confirmCanje}
+              disabled={loading}
+              className="bg-blue-600 text-white text-sm px-4 py-1.5 rounded-md hover:bg-blue-700 transition"
+            >
+              {loading ? 'Procesando...' : 'Confirmar'}
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   )
 }
