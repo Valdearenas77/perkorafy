@@ -10,7 +10,7 @@ type Perk = {
   id: string
   nombre: string
   descripcion: string
-  coste: number
+  puntos: number
 }
 
 export default function Catalogo() {
