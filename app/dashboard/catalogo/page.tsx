@@ -91,4 +91,75 @@ export default function Catalogo() {
       >
         <ArrowLeft className="w-4 h-4 mr-2" />
         Volver
-      </button
+      </button>
+
+      <h1 className="text-2xl font-bold mb-2 text-center">Catálogo de beneficios</h1>
+
+      {userPerks !== null && (
+        <p className="text-center text-sm text-gray-700 mb-6">
+          Tienes <strong>{userPerks}</strong> perks disponibles
+        </p>
+      )}
+
+      {isLoading ? (
+        <p className="text-center text-gray-500">Cargando beneficios...</p>
+      ) : perks.length === 0 ? (
+        <p className="text-center text-gray-500">No hay perks disponibles por ahora.</p>
+      ) : (
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+          {perks.map((perk) => {
+            const puedeCanjear = userPerks !== null ? userPerks >= perk.puntos : true
+
+            return (
+              <div
+                key={perk.id}
+                className={`border rounded-md p-4 shadow-sm transition-opacity ${
+                  !puedeCanjear ? 'opacity-50' : ''
+                }`}
+              >
+                <h2 className="font-semibold text-lg">{perk.nombre}</h2>
+                <p className="text-sm text-gray-600 mb-2">{perk.descripcion}</p>
+                <p className="text-sm font-bold mb-3">Coste: {perk.puntos} perks</p>
+                <Button
+                  onClick={() => handleCanjear(perk)}
+                  disabled={!puedeCanjear}
+                  className="bg-blue-600 text-white text-sm px-4 py-1.5 rounded-md hover:bg-blue-700 transition disabled:opacity-50"
+                >
+                  Canjear
+                </Button>
+              </div>
+            )
+          })}
+        </div>
+      )}
+
+      <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
+        <DialogContent>
+          <DialogHeader>¿Confirmar canje?</DialogHeader>
+          <p className="text-sm">
+            ¿Seguro que quieres canjear <strong>{selectedPerk?.nombre}</strong> por{' '}
+            <strong>{selectedPerk?.puntos}</strong> perks?
+          </p>
+
+          {errorMsg && <p className="text-sm text-red-600 mt-2">{errorMsg}</p>}
+
+          <div className="mt-4 flex justify-end gap-2">
+            <Button
+              onClick={() => setDialogOpen(false)}
+              className="bg-gray-300 text-sm px-4 py-1.5 rounded-md hover:bg-gray-400 transition"
+            >
+              Cancelar
+            </Button>
+            <Button
+              onClick={confirmCanje}
+              disabled={loading}
+              className="bg-blue-600 text-white text-sm px-4 py-1.5 rounded-md hover:bg-blue-700 transition"
+            >
+              {loading ? 'Procesando...' : 'Confirmar'}
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
+    </div>
+  )
+}
