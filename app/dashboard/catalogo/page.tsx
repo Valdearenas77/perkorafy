@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react'
 import { toast } from 'sonner'
 import { Dialog, DialogContent, DialogHeader } from '@/components/ui/dialog'
 import { Button } from '@/components/ui/button'
+import { ArrowLeft } from 'lucide-react'
 
 type Perk = {
   id: string
@@ -19,9 +20,15 @@ export default function Catalogo() {
   const [dialogOpen, setDialogOpen] = useState(false)
 
   const fetchPerks = async () => {
-    const res = await fetch('/api/perks')
-    const data = await res.json()
-    setPerks(data)
+    try {
+      const res = await fetch('/api/perks')
+      if (!res.ok) throw new Error('Error al cargar perks')
+      const data = await res.json()
+      setPerks(data)
+    } catch (error) {
+      toast.error('No se pudieron cargar los perks')
+      console.error(error)
+    }
   }
 
   useEffect(() => {
@@ -46,40 +53,56 @@ export default function Catalogo() {
     if (res.ok) {
       toast.success('Perk canjeado correctamente')
       setDialogOpen(false)
-      await fetchPerks() // actualizar perks disponibles
+      await fetchPerks()
     } else {
-      toast.error('No se pudo canjear el perk')
+      toast.error('Error al canjear perk')
     }
 
     setLoading(false)
   }
 
   return (
-    <div className="p-6 max-w-4xl mx-auto">
-      <h1 className="text-2xl font-bold mb-4">Catálogo de beneficios</h1>
+    <div className="p-6 max-w-5xl mx-auto">
+      {/* Botón volver */}
+      <button
+        onClick={() => window.history.back()}
+        className="flex items-center text-blue-600 hover:text-blue-800 mb-4"
+      >
+        <ArrowLeft className="w-4 h-4 mr-2" />
+        Volver
+      </button>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-        {perks.map((perk) => (
-          <div key={perk.id} className="border rounded-md p-4 shadow-sm">
-            <h2 className="font-semibold text-lg">{perk.nombre}</h2>
-            <p className="text-sm text-gray-600 mb-2">{perk.descripcion}</p>
-            <p className="text-sm font-bold mb-3">Coste: {perk.coste} perks</p>
-            <Button
-              onClick={() => handleCanjear(perk)}
-              className="bg-blue-600 text-white text-sm px-4 py-1.5 rounded-md hover:bg-blue-700 transition"
-            >
-              Canjear
-            </Button>
-          </div>
-        ))}
-      </div>
+      {/* Título */}
+      <h1 className="text-2xl font-bold mb-4 text-center">Catálogo de beneficios</h1>
 
+      {/* Lista de perks */}
+      {perks.length === 0 ? (
+        <p className="text-center text-gray-500">Cargando beneficios o no hay perks disponibles.</p>
+      ) : (
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+          {perks.map((perk) => (
+            <div key={perk.id} className="border rounded-md p-4 shadow-sm">
+              <h2 className="font-semibold text-lg">{perk.nombre}</h2>
+              <p className="text-sm text-gray-600 mb-2">{perk.descripcion}</p>
+              <p className="text-sm font-bold mb-3">Coste: {perk.coste} perks</p>
+              <Button
+                onClick={() => handleCanjear(perk)}
+                className="bg-blue-600 text-white text-sm px-4 py-1.5 rounded-md hover:bg-blue-700 transition"
+              >
+                Canjear
+              </Button>
+            </div>
+          ))}
+        </div>
+      )}
+
+      {/* Diálogo de confirmación */}
       <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
         <DialogContent>
           <DialogHeader>¿Confirmar canje?</DialogHeader>
           <p className="text-sm">
             ¿Seguro que quieres canjear <strong>{selectedPerk?.nombre}</strong> por{' '}
-            <strong>{selectedPerk?.coste}</strong> puntos?
+            <strong>{selectedPerk?.coste}</strong> perks?
           </p>
           <div className="mt-4 flex justify-end gap-2">
             <Button
