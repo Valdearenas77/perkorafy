@@ -31,7 +31,7 @@ const handleLogout = async () => {
 
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-100 p-4">
+    <div className="min-h-screen flex items-center justify-center bg-gray-100 p-4">	
       <Card className="w-full max-w-md shadow-xl rounded-2xl">
         <CardHeader className="flex flex-col items-center justify-center space-y-4 pt-6">
           <div className="w-20 h-20 bg-gray-300 rounded-full flex items-center justify-center text-4xl text-white">
@@ -52,7 +52,7 @@ const handleLogout = async () => {
             <a className="block bg-blue-100 text-blue-900 font-medium px-4 py-2 rounded-md hover:bg-blue-200 transition" href="/dashboard/catalogo">
               🎁 Catálogo de beneficios
             </a>
-            <a className="block bg-blue-100 text-blue-900 font-medium px-4 py-2 rounded-md hover:bg-blue-200 transition" href="#">
+            <a className="block bg-blue-100 text-blue-900 font-medium px-4 py-2 rounded-md hover:bg-blue-200 transition" href="/dashboard/historial">
               🧾 Historial de canjes
             </a>
           </div>
