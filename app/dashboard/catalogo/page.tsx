@@ -84,7 +84,7 @@ export default function Catalogo() {
             <div key={perk.id} className="border rounded-md p-4 shadow-sm">
               <h2 className="font-semibold text-lg">{perk.nombre}</h2>
               <p className="text-sm text-gray-600 mb-2">{perk.descripcion}</p>
-              <p className="text-sm font-bold mb-3">Coste: {perk.coste} perks</p>
+              <p className="text-sm font-bold mb-3">Coste: {perk.puntos} perks</p>
               <Button
                 onClick={() => handleCanjear(perk)}
                 className="bg-blue-600 text-white text-sm px-4 py-1.5 rounded-md hover:bg-blue-700 transition"
@@ -102,7 +102,7 @@ export default function Catalogo() {
           <DialogHeader>¿Confirmar canje?</DialogHeader>
           <p className="text-sm">
             ¿Seguro que quieres canjear <strong>{selectedPerk?.nombre}</strong> por{' '}
-            <strong>{selectedPerk?.coste}</strong> perks?
+            <strong>{selectedPerk?.puntos}</strong> perks?
           </p>
           <div className="mt-4 flex justify-end gap-2">
             <Button
