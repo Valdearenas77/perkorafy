@@ -44,7 +44,7 @@ export default function Catalogo() {
       setUserPerks(data.perks)
     } catch (error) {
       console.error("Error al obtener perks del usuario")
-      setUserPerks(0) // fallback para evitar errores de renderizado
+      setUserPerks(0)
     }
   }
 
@@ -115,13 +115,14 @@ export default function Catalogo() {
             return (
               <div
                 key={perk.id}
-                className={`border rounded-md p-4 shadow-sm transition-opacity ${
-                  !puedeCanjear ? 'opacity-50' : ''
+                className={`border rounded-md p-4 shadow-sm transition ${
+                  !puedeCanjear ? 'opacity-50 cursor-not-allowed' : ''
                 }`}
               >
                 <h2 className="font-semibold text-lg">{perk.nombre}</h2>
                 <p className="text-sm text-gray-600 mb-2">{perk.descripcion}</p>
                 <p className="text-sm font-bold mb-3">Coste: {perk.puntos} perks</p>
+
                 <Button
                   onClick={() => handleCanjear(perk)}
                   disabled={!puedeCanjear}
@@ -129,6 +130,10 @@ export default function Catalogo() {
                 >
                   Canjear
                 </Button>
+
+                {!puedeCanjear && (
+                  <p className="text-xs text-gray-500 mt-1">No tienes suficientes perks</p>
+                )}
               </div>
             )
           })}
