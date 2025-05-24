@@ -16,8 +16,10 @@ type Perk = {
 export default function Catalogo() {
   const [perks, setPerks] = useState<Perk[]>([])
   const [selectedPerk, setSelectedPerk] = useState<Perk | null>(null)
+  const [userPerks, setUserPerks] = useState<number | null>(null)
   const [loading, setLoading] = useState(false)
   const [dialogOpen, setDialogOpen] = useState(false)
+  const [errorMsg, setErrorMsg] = useState("")
 
   const fetchPerks = async () => {
     try {
@@ -31,18 +33,31 @@ export default function Catalogo() {
     }
   }
 
+  const fetchUserPerks = async () => {
+    try {
+      const res = await fetch('/api/user/perks')
+      const data = await res.json()
+      setUserPerks(data.perks)
+    } catch (error) {
+      console.error("Error al obtener perks del usuario")
+    }
+  }
+
   useEffect(() => {
     fetchPerks()
+    fetchUserPerks()
   }, [])
 
   const handleCanjear = (perk: Perk) => {
     setSelectedPerk(perk)
+    setErrorMsg("")
     setDialogOpen(true)
   }
 
   const confirmCanje = async () => {
     if (!selectedPerk) return
     setLoading(true)
+    setErrorMsg("")
 
     const res = await fetch('/api/canjear', {
       method: 'POST',
@@ -50,12 +65,16 @@ export default function Catalogo() {
       body: JSON.stringify({ perkId: selectedPerk.id }),
     })
 
+    const result = await res.json()
+
     if (res.ok) {
       toast.success('Perk canjeado correctamente')
       setDialogOpen(false)
       await fetchPerks()
+      await fetchUserPerks()
     } else {
-      toast.error('Error al canjear perk')
+      toast.error(result.error || 'Error al canjear perk')
+      setErrorMsg(result.error)
     }
 
     setLoading(false)
@@ -63,7 +82,6 @@ export default function Catalogo() {
 
   return (
     <div className="p-6 max-w-5xl mx-auto">
-      {/* Botón volver */}
       <button
         onClick={() => window.history.back()}
         className="flex items-center text-blue-600 hover:text-blue-800 mb-4"
@@ -72,31 +90,44 @@ export default function Catalogo() {
         Volver
       </button>
 
-      {/* Título */}
-      <h1 className="text-2xl font-bold mb-4 text-center">Catálogo de beneficios</h1>
+      <h1 className="text-2xl font-bold mb-2 text-center">Catálogo de beneficios</h1>
 
-      {/* Lista de perks */}
+      {userPerks !== null && (
+        <p className="text-center text-sm text-gray-700 mb-6">
+          Tienes <strong>{userPerks}</strong> perks disponibles
+        </p>
+      )}
+
       {perks.length === 0 ? (
         <p className="text-center text-gray-500">Cargando beneficios o no hay perks disponibles.</p>
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-          {perks.map((perk) => (
-            <div key={perk.id} className="border rounded-md p-4 shadow-sm">
-              <h2 className="font-semibold text-lg">{perk.nombre}</h2>
-              <p className="text-sm text-gray-600 mb-2">{perk.descripcion}</p>
-              <p className="text-sm font-bold mb-3">Coste: {perk.puntos} perks</p>
-              <Button
-                onClick={() => handleCanjear(perk)}
-                className="bg-blue-600 text-white text-sm px-4 py-1.5 rounded-md hover:bg-blue-700 transition"
+          {perks.map((perk) => {
+            const puedeCanjear = userPerks !== null ? userPerks >= perk.puntos : true
+
+            return (
+              <div
+                key={perk.id}
+                className={`border rounded-md p-4 shadow-sm transition-opacity ${
+                  !puedeCanjear ? 'opacity-50' : ''
+                }`}
               >
-                Canjear
-              </Button>
-            </div>
-          ))}
+                <h2 className="font-semibold text-lg">{perk.nombre}</h2>
+                <p className="text-sm text-gray-600 mb-2">{perk.descripcion}</p>
+                <p className="text-sm font-bold mb-3">Coste: {perk.puntos} perks</p>
+                <Button
+                  onClick={() => handleCanjear(perk)}
+                  disabled={!puedeCanjear}
+                  className="bg-blue-600 text-white text-sm px-4 py-1.5 rounded-md hover:bg-blue-700 transition disabled:opacity-50"
+                >
+                  Canjear
+                </Button>
+              </div>
+            )
+          })}
         </div>
       )}
 
-      {/* Diálogo de confirmación */}
       <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
         <DialogContent>
           <DialogHeader>¿Confirmar canje?</DialogHeader>
@@ -104,6 +135,9 @@ export default function Catalogo() {
             ¿Seguro que quieres canjear <strong>{selectedPerk?.nombre}</strong> por{' '}
             <strong>{selectedPerk?.puntos}</strong> perks?
           </p>
+
+          {errorMsg && <p className="text-sm text-red-600 mt-2">{errorMsg}</p>}
+
           <div className="mt-4 flex justify-end gap-2">
             <Button
               onClick={() => setDialogOpen(false)}
