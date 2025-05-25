@@ -5,7 +5,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
     <div className="flex min-h-screen">
       {/* Sidebar */}
       <aside className="w-64 bg-gray-800 text-white p-6">
-        <h1 className="text-2xl font-bold mb-8">Perkorafy Admin</h1>
+        <h1 className="text-2xl font-bold mb-8">🧪 Layout ACTIVO</h1>
         <nav className="flex flex-col gap-4">
           <Link href="/admin/dashboard" className="hover:underline">
             Dashboard
