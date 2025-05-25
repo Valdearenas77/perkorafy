@@ -1,13 +1,11 @@
 'use client'
 
 import { useState } from 'react'
-import { useRouter } from 'next/navigation'
 import { toast } from 'sonner'
 
 export default function AdminLoginPage() {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
-  const router = useRouter()
 
   const handleLogin = async () => {
     const res = await fetch('/api/admin/login', {
@@ -19,7 +17,8 @@ export default function AdminLoginPage() {
     const data = await res.json()
     if (res.ok) {
       toast.success('Bienvenido, administrador')
-      router.push('/admin/dashboard')
+      // Forzar recarga completa para que se aplique el layout del grupo (panel)
+      window.location.href = '/admin/dashboard'
     } else {
       toast.error(data.error || 'Error al iniciar sesión')
     }
