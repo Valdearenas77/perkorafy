@@ -5,19 +5,16 @@ import jwt from 'jsonwebtoken'
 const JWT_SECRET = process.env.JWT_SECRET ?? 'clave_super_secreta'
 
 export function middleware(req: NextRequest) {
-  const isAdminRoute = req.nextUrl.pathname.startsWith('/admin')
+  const isProtected = req.nextUrl.pathname.startsWith('/admin/panel')
 
-  if (isAdminRoute && !req.nextUrl.pathname.startsWith('/admin/login')) {
+  if (isProtected) {
     const token = req.cookies.get('adminToken')?.value
-
-    if (!token) {
-      return NextResponse.redirect(new URL('/admin/login', req.url))
-    }
+    if (!token) return NextResponse.redirect(new URL('/admin/login', req.url))
 
     try {
       jwt.verify(token, JWT_SECRET)
       return NextResponse.next()
-    } catch (err) {
+    } catch {
       return NextResponse.redirect(new URL('/admin/login', req.url))
     }
   }
@@ -28,3 +25,4 @@ export function middleware(req: NextRequest) {
 export const config = {
   matcher: ['/admin/panel/:path*'],
 }
+
