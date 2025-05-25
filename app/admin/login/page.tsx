@@ -18,7 +18,7 @@ export default function AdminLoginPage() {
     if (res.ok) {
       toast.success('Bienvenido, administrador')
       // Forzar recarga completa para que se aplique el layout del grupo (panel)
-      window.location.href = '/admin/(panel)/dashboard'
+      window.location.href = '/admin/dashboard'
     } else {
       toast.error(data.error || 'Error al iniciar sesión')
     }
