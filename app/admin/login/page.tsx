@@ -21,7 +21,10 @@ export default function AdminLoginPage() {
 
     if (res.ok) {
       toast.success('Bienvenido, administrador')
-      window.location.href = '/admin/panel/dashboard'
+      setTimeout(() => {
+                        window.location.href = '/admin/panel/dashboard'
+                       }, 300)
+
     } else {
       toast.error(data.error || 'Error al iniciar sesión')
     }
