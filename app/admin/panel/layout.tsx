@@ -26,7 +26,9 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
             <Link href="/admin/panel/canjes" className="hover:underline">Canjes</Link>
           </nav>
         </div>
-
+        <Link href="/admin/panel/perfil" className="text-sm text-gray-300 hover:underline mb-4 block">
+          Mi perfil
+        </Link>
         <button
           onClick={handleLogout}
           disabled={loading}
