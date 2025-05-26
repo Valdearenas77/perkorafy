@@ -1,31 +1,30 @@
 'use client'
 
 import { useEffect, useState } from 'react'
+import { toast } from 'sonner'
 
 export default function AdminDashboard() {
-  const [token, setToken] = useState('')
+  const [loading, setLoading] = useState(false)
 
-  useEffect(() => {
-    const cookies = document.cookie
-    const match = cookies.match(/adminToken=([^;]+)/)
-    if (match) {
-      setToken(match[1])
-    } else {
-      setToken('No se encontró la cookie adminToken')
-    }
-  }, [])
+  const handleLogout = async () => {
+    setLoading(true)
+    await fetch('/api/admin/logout', { method: 'POST' })
+    toast.success('Sesión cerrada')
+    window.location.href = '/admin/login'
+  }
 
   return (
     <div className="text-center">
       <h1 className="text-2xl font-semibold mb-2">Bienvenido al panel de administración</h1>
       <p className="text-gray-600 mb-4">Desde aquí puedes gestionar usuarios, perks y canjes.</p>
 
-      <div className="mt-6 p-4 bg-gray-100 rounded shadow text-left max-w-xl mx-auto">
-        <h2 className="font-semibold mb-2 text-lg">🔍 Token detectado en cookie:</h2>
-        <code className="text-sm break-all block bg-white p-2 rounded border">
-          {token}
-        </code>
-      </div>
+      <button
+        onClick={handleLogout}
+        disabled={loading}
+        className="bg-red-600 text-white text-sm px-4 py-1.5 rounded-md hover:bg-red-700 transition disabled:opacity-50"
+      >
+        {loading ? 'Cerrando sesión...' : 'Cerrar sesión'}
+      </button>
     </div>
   )
 }
