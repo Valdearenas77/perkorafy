@@ -1,6 +1,10 @@
-'use client'
+import { prisma } from '@/lib/prisma'
 
-export default function AdminDashboard() {
+export default async function AdminDashboard() {
+  const totalUsuarios = await prisma.user.count()
+  const totalPerks = await prisma.perk.count()
+  const totalCanjes = await prisma.canje.count()
+
   return (
     <div>
       <h1 className="text-2xl font-semibold mb-6 text-center">Panel de administración</h1>
@@ -9,24 +13,25 @@ export default function AdminDashboard() {
         {/* Usuarios */}
         <div className="bg-white shadow-md rounded-lg p-6 text-center">
           <h2 className="text-xl font-bold mb-2">Usuarios</h2>
-          <p className="text-4xl text-blue-600 font-semibold">134</p>
+          <p className="text-4xl text-blue-600 font-semibold">{totalUsuarios}</p>
           <p className="text-gray-500">Dados de alta</p>
         </div>
 
         {/* Perks */}
         <div className="bg-white shadow-md rounded-lg p-6 text-center">
           <h2 className="text-xl font-bold mb-2">Perks</h2>
-          <p className="text-4xl text-green-600 font-semibold">28</p>
+          <p className="text-4xl text-green-600 font-semibold">{totalPerks}</p>
           <p className="text-gray-500">Totales en catálogo</p>
         </div>
 
         {/* Canjes */}
         <div className="bg-white shadow-md rounded-lg p-6 text-center">
           <h2 className="text-xl font-bold mb-2">Canjes</h2>
-          <p className="text-4xl text-purple-600 font-semibold">76</p>
+          <p className="text-4xl text-purple-600 font-semibold">{totalCanjes}</p>
           <p className="text-gray-500">Realizados</p>
         </div>
       </div>
     </div>
   )
 }
+
