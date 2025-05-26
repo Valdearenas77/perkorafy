@@ -1,8 +1,19 @@
-import { NextResponse } from 'next/server'
+import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
+import jwt from 'jsonwebtoken'
 
-export async function GET() {
+const JWT_SECRET = process.env.JWT_SECRET ?? 'clave_super_secreta'
+
+export async function GET(req: NextRequest) {
+  const token = req.cookies.get('adminToken')?.value
+
+  if (!token) {
+    return NextResponse.json({ error: 'No autenticado' }, { status: 401 })
+  }
+
   try {
+    jwt.verify(token, JWT_SECRET)
+
     const usuarios = await prisma.user.findMany({
       select: {
         id: true,
@@ -11,8 +22,10 @@ export async function GET() {
         perks: true,
       },
     })
+
     return NextResponse.json(usuarios)
-  } catch (error) {
-    return NextResponse.json({ error: 'Error al obtener usuarios' }, { status: 500 })
+  } catch (err) {
+    console.error('[API ADMIN USUARIOS]', err)
+    return NextResponse.json({ error: 'Token inválido' }, { status: 401 })
   }
 }
