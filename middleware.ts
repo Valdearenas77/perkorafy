@@ -9,12 +9,22 @@ export function middleware(req: NextRequest) {
 
   if (isProtected) {
     const token = req.cookies.get('adminToken')?.value
-    if (!token) return NextResponse.redirect(new URL('/admin/login', req.url))
+
+    console.log('[MIDDLEWARE] Ruta protegida:', req.nextUrl.pathname)
+    console.log('[MIDDLEWARE] Token recibido:', token ?? 'SIN TOKEN')
+    console.log('[MIDDLEWARE] JWT_SECRET activo:', JWT_SECRET ? 'sí' : 'NO DEFINIDO')
+
+    if (!token) {
+      console.warn('[MIDDLEWARE] No hay token → Redirigiendo a login')
+      return NextResponse.redirect(new URL('/admin/login', req.url))
+    }
 
     try {
-      jwt.verify(token, JWT_SECRET)
+      const decoded = jwt.verify(token, JWT_SECRET)
+      console.log('[MIDDLEWARE] Token válido:', decoded)
       return NextResponse.next()
-    } catch {
+    } catch (err) {
+      console.error('[MIDDLEWARE] Error al verificar token:', err)
       return NextResponse.redirect(new URL('/admin/login', req.url))
     }
   }
@@ -25,4 +35,3 @@ export function middleware(req: NextRequest) {
 export const config = {
   matcher: ['/admin/panel/:path*'],
 }
-
