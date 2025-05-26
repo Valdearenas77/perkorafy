@@ -16,7 +16,7 @@ export async function GET(req: NextRequest) {
 
     const admin = await prisma.admin.findUnique({
       where: { id: decoded.id },
-      select: { id: true, email: true, nombre: true }, // ajusta si tu campo se llama distinto
+      select: { id: true, email: true, name: true }, // ajusta si tu campo se llama distinto
     })
 
     if (!admin) {
@@ -29,4 +29,4 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({ error: 'Token inválido' }, { status: 401 })
   }
 }
-//redeploy
+
