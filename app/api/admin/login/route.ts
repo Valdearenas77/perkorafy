@@ -25,16 +25,18 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Credenciales inválidas' }, { status: 401 })
     }
 
-    // Crear el token
-    const token = jwt.sign({ id: admin.id, email: admin.email }, JWT_SECRET, { expiresIn: '1d' })
+    // Generar token
+    const token = jwt.sign({ id: admin.id, email: admin.email }, JWT_SECRET, {
+      expiresIn: '1d',
+    })
 
-    // Crear la respuesta
+    // Crear respuesta
     const response = NextResponse.json({ message: 'Login correcto' })
 
-    // Setear cookie segura
+    // Establecer cookie segura y compatible
     response.cookies.set('adminToken', token, {
       httpOnly: true,
-      secure: process.env.NODE_ENV === 'production', // solo true en Vercel o producción
+      secure: process.env.NODE_ENV === 'production', // solo true en Vercel
       sameSite: 'lax',
       path: '/',
       maxAge: 60 * 60 * 24, // 1 día
@@ -42,7 +44,7 @@ export async function POST(req: NextRequest) {
 
     return response
   } catch (error) {
-    console.error(error)
+    console.error('[ADMIN LOGIN ERROR]', error)
     return NextResponse.json({ error: 'Error interno' }, { status: 500 })
   }
 }
