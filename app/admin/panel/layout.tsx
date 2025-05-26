@@ -26,16 +26,23 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
             <Link href="/admin/panel/canjes" className="hover:underline">Canjes</Link>
           </nav>
         </div>
-        <Link href="/admin/panel/perfil" className="text-sm text-gray-300 hover:underline mb-4 block">
-          Mi perfil
-        </Link>
-        <button
-          onClick={handleLogout}
-          disabled={loading}
-          className="bg-red-600 text-white text-sm px-4 py-1.5 rounded-md hover:bg-red-700 transition disabled:opacity-50 mt-8"
-        >
-          {loading ? 'Cerrando sesión...' : 'Cerrar sesión'}
-        </button>
+
+        <div className="mt-8 flex flex-col gap-2">
+          <button
+            onClick={() => (window.location.href = '/admin/panel/perfil')}
+            className="bg-blue-600 text-white text-sm px-4 py-1.5 rounded-md hover:bg-blue-700 transition"
+          >
+            Mi perfil
+          </button>
+
+          <button
+            onClick={handleLogout}
+            disabled={loading}
+            className="bg-red-600 text-white text-sm px-4 py-1.5 rounded-md hover:bg-red-700 transition disabled:opacity-50"
+          >
+            {loading ? 'Cerrando sesión...' : 'Cerrar sesión'}
+          </button>
+        </div>
       </aside>
 
       <main className="flex-1 bg-gray-100 p-8">
