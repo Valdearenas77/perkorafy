@@ -1,3 +1,5 @@
+export const runtime = 'nodejs' // 👈 Fuerza entorno compatible con crypto
+
 import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
 import jwt from 'jsonwebtoken'
@@ -35,3 +37,4 @@ export function middleware(req: NextRequest) {
 export const config = {
   matcher: ['/admin/panel/:path*'],
 }
+
