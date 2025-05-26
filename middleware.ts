@@ -21,3 +21,5 @@ export function middleware(req: NextRequest) {
 export const config = {
   matcher: ['/admin/panel/:path*'],
 }
+
+// forzar redeploy
