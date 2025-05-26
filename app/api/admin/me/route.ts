@@ -29,3 +29,4 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({ error: 'Token inválido' }, { status: 401 })
   }
 }
+//redeploy
