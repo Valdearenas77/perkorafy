@@ -73,7 +73,7 @@ export default function UsuariosPage() {
               <td className="px-4 py-2">{usuario.email}</td>
               <td className="px-4 py-2">{usuario.perks}</td>
               <td className="px-4 py-2">
-                <Button onClick={() => abrirModal(usuario)}>
+                <Button className="px-4 py-1.5 text-sm" onClick={() => abrirModal(usuario)}>
                   Editar
                 </Button>
               </td>
