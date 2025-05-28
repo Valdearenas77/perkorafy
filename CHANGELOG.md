@@ -91,3 +91,12 @@ Historial de cambios del proyecto Perkorafy.
 - Campo de nombre desactivado por defecto para evitar ediciones accidentales.
 - Mensajes de error visuales si la actualización falla.
 - Botón "Guardar" deshabilitado mientras se está enviando el cambio.
+
+✅ Versión estable — 28 de mayo de 2025
+Incluye:
+
+🔐 Conexión confirmada a base de datos production en Neon.
+🧮 Actualización de perks totalmente funcional y sincronizada en dashboard.
+🧼 Limpieza del endpoint de debug tras verificación completa.
+🧠 Configuración centralizada de entorno local y producción unificados.
+✅ Preparada para continuar con nuevas funcionalidades de forma segura.
