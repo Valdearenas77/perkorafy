@@ -34,7 +34,7 @@ export default function UsuariosPage() {
     if (!usuarioActivo) return
     try {
       const res = await fetch(`/api/admin/usuarios/${usuarioActivo.id}/perks`, {
-        method: 'POST',
+        method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ perks: nuevoPerk }),
       })
@@ -99,15 +99,24 @@ export default function UsuariosPage() {
               <input
                 type="number"
                 value={nuevoPerk}
-                onChange={(e) => setNuevoPerk(parseInt(e.target.value))}
+                onChange={(e) => setNuevoPerk(Number(e.target.value) || 0)}
                 className="w-full border rounded px-3 py-2"
               />
 
               <div className="flex justify-end gap-2 pt-2">
-                <Button variant="outline" onClick={() => setAbierto(false)}>
+                <Button
+                  variant="outline"
+                  onClick={() => setAbierto(false)}
+                  className="text-sm px-4 py-1.5 rounded-md"
+                >
                   Cancelar
                 </Button>
-                <Button onClick={guardarPerks}>Guardar</Button>
+                <Button
+                  onClick={guardarPerks}
+                  className="bg-blue-600 text-white text-sm px-4 py-1.5 rounded-md hover:bg-blue-700 transition"
+                >
+                  Guardar
+                </Button>
               </div>
             </div>
           )}
