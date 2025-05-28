@@ -1,0 +1,7 @@
+{
+  "components": "components",
+  "utils": "lib/utils.ts",
+  "styles": "styles/globals.css",
+  "tailwind": "tailwind.config.js",
+  "tsx": true
+}
