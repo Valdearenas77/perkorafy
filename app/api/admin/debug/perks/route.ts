@@ -10,5 +10,7 @@ export async function GET() {
     select: { id: true, name: true, perks: true }
   })
 
-  return NextResponse.json({ suma, users })
+  const databaseUrl = process.env.DATABASE_URL
+
+  return NextResponse.json({ suma, users, databaseUrl })
 }
