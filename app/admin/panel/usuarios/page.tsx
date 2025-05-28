@@ -1,7 +1,6 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import { useRouter } from 'next/navigation'
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog'
 import { toast } from 'sonner'
 import { Button } from '@/components/ui/button'
@@ -18,7 +17,6 @@ export default function UsuariosPage() {
   const [usuarioActivo, setUsuarioActivo] = useState<Usuario | null>(null)
   const [nuevoPerk, setNuevoPerk] = useState<number>(0)
   const [abierto, setAbierto] = useState(false)
-  const router = useRouter()
 
   useEffect(() => {
     fetch('/api/admin/usuarios')
@@ -49,9 +47,8 @@ export default function UsuariosPage() {
         )
         setAbierto(false)
 
-        // Redirigir al dashboard y forzar recarga
-        router.push('/admin/panel/dashboard')
-        router.refresh()
+        // Forzar recarga total del navegador para actualizar el dashboard
+        window.location.href = '/admin/panel/dashboard'
       } else {
         const data = await res.json()
         toast.error(data.error || 'Error al actualizar perks')
