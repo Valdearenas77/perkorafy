@@ -15,14 +15,17 @@ type Canje = {
 
 export default function CanjesPage() {
   const [canjes, setCanjes] = useState<Canje[]>([])
+  const pathname = usePathname()
 
-const pathname = usePathname()
+  const refetchCanjes = () => {
+    fetch('/api/admin/canjes')
+      .then((res) => res.json())
+      .then((data) => setCanjes(data))
+  }
 
-useEffect(() => {
-  fetch('/api/admin/canjes')
-    .then(res => res.json())
-    .then(data => setCanjes(data))
-}, [pathname])
+  useEffect(() => {
+    refetchCanjes()
+  }, [pathname])
 
   const actualizarEstado = async (id: number, nuevoEstado: string) => {
     try {
@@ -33,10 +36,8 @@ useEffect(() => {
       })
 
       if (res.ok) {
-        setCanjes((prev) =>
-          prev.map((c) => (c.id === id ? { ...c, estado: nuevoEstado } : c))
-        )
         toast.success(`Canje ${nuevoEstado}`)
+        refetchCanjes()
       } else {
         toast.error('Error al actualizar el estado')
       }
