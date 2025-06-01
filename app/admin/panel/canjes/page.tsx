@@ -16,7 +16,7 @@ export default function CanjesPage() {
   const [canjes, setCanjes] = useState<Canje[]>([])
 
   useEffect(() => {
-    fetch('/api/admin/canjes')
+    fetch('/api/admin/canjes', { cache: 'no-store' })
       .then((res) => res.json())
       .then((data) => setCanjes(data))
   }, [])
@@ -95,3 +95,4 @@ export default function CanjesPage() {
     </div>
   )
 }
+
