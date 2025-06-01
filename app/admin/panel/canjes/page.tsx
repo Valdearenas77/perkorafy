@@ -30,12 +30,15 @@ export default function CanjesPage() {
       })
 
       if (res.ok) {
+        const actualizado = await res.json()
         setCanjes((prev) =>
           prev.map((canje) =>
-            canje.id === id ? { ...canje, estado: nuevoEstado } : canje
+            canje.id === actualizado.id
+              ? { ...canje, estado: actualizado.estado }
+              : canje
           )
         )
-        toast.success(`Canje ${nuevoEstado}`)
+        toast.success(`Canje ${actualizado.estado}`)
       } else {
         toast.error('Error al actualizar el estado')
       }
