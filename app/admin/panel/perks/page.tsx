@@ -57,9 +57,11 @@ export default function PerksPage() {
     <div>
       <div className="flex items-center justify-between mb-4">
         <h1 className="text-2xl font-semibold">Catálogo de Perks</h1>
-        <Button onClick={() => setModalAbierto(true)} className="bg-blue-600 text-white hover:bg-blue-700">
-          Nuevo perk
-        </Button>
+        <Button
+           onClick={() => setModalAbierto(true)}
+           className="bg-blue-600 text-white hover:bg-blue-700 px-5 py-2 text-sm rounded-md">
+           Crear perk
+         </Button>
       </div>
 
       <table className="w-full bg-white shadow rounded-lg">
@@ -124,14 +126,22 @@ export default function PerksPage() {
               />
             </div>
 
-            <div className="flex justify-end gap-2 pt-2">
-              <Button type="button" variant="outline" onClick={() => setModalAbierto(false)}>
-                Cancelar
-              </Button>
-              <Button type="submit" className="bg-blue-600 text-white hover:bg-blue-700">
-                Guardar
-              </Button>
-            </div>
+<div className="flex justify-end gap-2 pt-2">
+  <Button
+    type="button"
+    variant="outline"
+    onClick={() => setModalAbierto(false)}
+    className="px-5 py-1.5 text-sm rounded-md"
+  >
+    Cancelar
+  </Button>
+  <Button
+    type="submit"
+    className="bg-blue-600 text-white hover:bg-blue-700 px-5 py-1.5 text-sm rounded-md"
+  >
+    Guardar
+  </Button>
+</div>
           </form>
         </DialogContent>
       </Dialog>
