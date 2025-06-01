@@ -18,7 +18,13 @@ export async function GET() {
       },
     })
 
-    return NextResponse.json(canjes)
+    return new NextResponse(JSON.stringify(canjes), {
+      status: 200,
+      headers: {
+        'Content-Type': 'application/json',
+        'Cache-Control': 'no-store',
+      },
+    })
   } catch (error) {
     console.error('Error al obtener canjes:', error)
     return NextResponse.json({ error: 'Error al obtener canjes' }, { status: 500 })
