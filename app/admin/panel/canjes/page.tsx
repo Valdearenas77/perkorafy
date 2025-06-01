@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect, useState } from 'react'
+import { usePathname } from 'next/navigation'
 import { Button } from '@/components/ui/button'
 import { toast } from 'sonner'
 
@@ -15,11 +16,13 @@ type Canje = {
 export default function CanjesPage() {
   const [canjes, setCanjes] = useState<Canje[]>([])
 
-  useEffect(() => {
-    fetch('/api/admin/canjes')
-      .then(res => res.json())
-      .then(data => setCanjes(data))
-  }, [])
+const pathname = usePathname()
+
+useEffect(() => {
+  fetch('/api/admin/canjes')
+    .then(res => res.json())
+    .then(data => setCanjes(data))
+}, [pathname])
 
   const actualizarEstado = async (id: number, nuevoEstado: string) => {
     try {
