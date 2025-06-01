@@ -5,9 +5,16 @@ export async function GET() {
   try {
     const canjes = await prisma.canje.findMany({
       orderBy: { fecha: 'desc' },
-      include: {
-        usuario: { select: { name: true } },
-        perk: { select: { nombre: true } },
+      select: {
+        id: true,
+        fecha: true,
+        estado: true,
+        usuario: {
+          select: { name: true },
+        },
+        perk: {
+          select: { nombre: true },
+        },
       },
     })
 
