@@ -69,7 +69,7 @@ export default function PerksPage() {
           <tr>
             <th className="text-left px-4 py-2">Nombre</th>
             <th className="text-left px-4 py-2">Descripción</th>
-            <th className="text-left px-4 py-2">Puntos</th>
+            <th className="text-left px-4 py-2">Perks</th>
             <th className="text-left px-4 py-2">Acciones</th>
           </tr>
         </thead>
@@ -116,7 +116,7 @@ export default function PerksPage() {
               />
             </div>
             <div>
-              <label className="block text-sm font-medium mb-1">Puntos necesarios</label>
+              <label className="block text-sm font-medium mb-1">Perks necesarios</label>
               <input
                 type="number"
                 value={puntos}
