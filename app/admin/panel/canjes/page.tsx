@@ -1,7 +1,6 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import { usePathname } from 'next/navigation'
 import { Button } from '@/components/ui/button'
 import { toast } from 'sonner'
 
@@ -15,17 +14,12 @@ type Canje = {
 
 export default function CanjesPage() {
   const [canjes, setCanjes] = useState<Canje[]>([])
-  const pathname = usePathname()
 
-  const refetchCanjes = () => {
+  useEffect(() => {
     fetch('/api/admin/canjes')
       .then((res) => res.json())
       .then((data) => setCanjes(data))
-  }
-
-  useEffect(() => {
-    refetchCanjes()
-  }, [pathname])
+  }, [])
 
   const actualizarEstado = async (id: number, nuevoEstado: string) => {
     try {
@@ -36,8 +30,12 @@ export default function CanjesPage() {
       })
 
       if (res.ok) {
+        setCanjes((prev) =>
+          prev.map((canje) =>
+            canje.id === id ? { ...canje, estado: nuevoEstado } : canje
+          )
+        )
         toast.success(`Canje ${nuevoEstado}`)
-        refetchCanjes()
       } else {
         toast.error('Error al actualizar el estado')
       }
