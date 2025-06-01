@@ -20,6 +20,9 @@ export default function PerksPage() {
   const [descripcion, setDescripcion] = useState('')
   const [puntos, setPuntos] = useState(0)
 
+  const [modoEdicion, setModoEdicion] = useState(false)
+  const [perkEditando, setPerkEditando] = useState<Perk | null>(null)
+
   const [perkAEliminar, setPerkAEliminar] = useState<Perk | null>(null)
   const [confirmarEliminacion, setConfirmarEliminacion] = useState(false)
 
@@ -32,24 +35,43 @@ export default function PerksPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
 
+    const payload = { nombre, descripcion, puntos }
+
+    const url = modoEdicion
+      ? `/api/admin/perks/${perkEditando?.id}`
+      : '/api/admin/perks'
+
+    const method = modoEdicion ? 'PATCH' : 'POST'
+
     try {
-      const res = await fetch('/api/admin/perks', {
-        method: 'POST',
+      const res = await fetch(url, {
+        method,
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ nombre, descripcion, puntos }),
+        body: JSON.stringify(payload),
       })
 
       if (res.ok) {
-        const nuevo = await res.json()
-        setPerks((prev) => [...prev, nuevo])
-        toast.success('Perk creado correctamente')
+        const actualizado = await res.json()
+
+        if (modoEdicion) {
+          setPerks((prev) =>
+            prev.map((p) => (p.id === actualizado.id ? actualizado : p))
+          )
+          toast.success('Perk actualizado correctamente')
+        } else {
+          setPerks((prev) => [...prev, actualizado])
+          toast.success('Perk creado correctamente')
+        }
+
         setModalAbierto(false)
+        setModoEdicion(false)
+        setPerkEditando(null)
         setNombre('')
         setDescripcion('')
         setPuntos(0)
       } else {
         const data = await res.json()
-        toast.error(data.error || 'Error al crear el perk')
+        toast.error(data.error || 'Error al guardar')
       }
     } catch {
       toast.error('Error de conexión con el servidor')
@@ -61,7 +83,13 @@ export default function PerksPage() {
       <div className="flex items-center justify-between mb-4">
         <h1 className="text-2xl font-semibold">Catálogo de Perks</h1>
         <Button
-          onClick={() => setModalAbierto(true)}
+          onClick={() => {
+            setModalAbierto(true)
+            setModoEdicion(false)
+            setNombre('')
+            setDescripcion('')
+            setPuntos(0)
+          }}
           className="bg-blue-600 text-white hover:bg-blue-700 px-5 py-2 text-sm rounded-md"
         >
           Crear perk
@@ -85,7 +113,19 @@ export default function PerksPage() {
               <td className="px-4 py-2">{perk.puntos}</td>
               <td className="px-4 py-2">
                 <div className="flex gap-2">
-                  <Button className="px-3 py-1 text-sm">Editar</Button>
+                  <Button
+                    className="px-3 py-1 text-sm"
+                    onClick={() => {
+                      setModoEdicion(true)
+                      setPerkEditando(perk)
+                      setNombre(perk.nombre)
+                      setDescripcion(perk.descripcion)
+                      setPuntos(perk.puntos)
+                      setModalAbierto(true)
+                    }}
+                  >
+                    Editar
+                  </Button>
                   <Button
                     variant="destructive"
                     className="px-3 py-1 text-sm"
@@ -103,11 +143,11 @@ export default function PerksPage() {
         </tbody>
       </table>
 
-      {/* Modal para crear nuevo perk */}
+      {/* Modal Crear/Editar */}
       <Dialog open={modalAbierto} onOpenChange={setModalAbierto}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Crear nuevo perk</DialogTitle>
+            <DialogTitle>{modoEdicion ? 'Editar perk' : 'Crear nuevo perk'}</DialogTitle>
           </DialogHeader>
 
           <form onSubmit={handleSubmit} className="space-y-4">
@@ -144,7 +184,10 @@ export default function PerksPage() {
               <Button
                 type="button"
                 variant="outline"
-                onClick={() => setModalAbierto(false)}
+                onClick={() => {
+                  setModalAbierto(false)
+                  setModoEdicion(false)
+                }}
                 className="px-5 py-1.5 text-sm rounded-md"
               >
                 Cancelar
@@ -160,7 +203,7 @@ export default function PerksPage() {
         </DialogContent>
       </Dialog>
 
-      {/* Modal de confirmación de eliminación */}
+      {/* Modal Confirmación Eliminación */}
       <Dialog open={confirmarEliminacion} onOpenChange={setConfirmarEliminacion}>
         <DialogContent>
           <DialogHeader>
@@ -214,4 +257,3 @@ export default function PerksPage() {
     </div>
   )
 }
-

@@ -26,3 +26,32 @@ export async function DELETE(
     return NextResponse.json({ error: 'Error al eliminar perk' }, { status: 500 })
   }
 }
+
+export async function PATCH(
+  req: NextRequest,
+  { params }: { params: { id: string } }
+) {
+  const id = parseInt(params.id)
+
+  if (isNaN(id)) {
+    return NextResponse.json({ error: 'ID inválido' }, { status: 400 })
+  }
+
+  try {
+    const { nombre, descripcion, puntos } = await req.json()
+
+    if (!nombre || !descripcion || typeof puntos !== 'number' || puntos < 0) {
+      return NextResponse.json({ error: 'Datos inválidos' }, { status: 400 })
+    }
+
+    const updated = await prisma.perk.update({
+      where: { id },
+      data: { nombre, descripcion, puntos }
+    })
+
+    return NextResponse.json(updated)
+  } catch (error) {
+    console.error('Error al actualizar perk:', error)
+    return NextResponse.json({ error: 'Error al actualizar perk' }, { status: 500 })
+  }
+}
