@@ -20,6 +20,9 @@ export default function PerksPage() {
   const [descripcion, setDescripcion] = useState('')
   const [puntos, setPuntos] = useState(0)
 
+  const [perkAEliminar, setPerkAEliminar] = useState<Perk | null>(null)
+  const [confirmarEliminacion, setConfirmarEliminacion] = useState(false)
+
   useEffect(() => {
     fetch('/api/admin/perks')
       .then(res => res.json())
@@ -58,10 +61,11 @@ export default function PerksPage() {
       <div className="flex items-center justify-between mb-4">
         <h1 className="text-2xl font-semibold">Catálogo de Perks</h1>
         <Button
-           onClick={() => setModalAbierto(true)}
-           className="bg-blue-600 text-white hover:bg-blue-700 px-5 py-2 text-sm rounded-md">
-           Crear perk
-         </Button>
+          onClick={() => setModalAbierto(true)}
+          className="bg-blue-600 text-white hover:bg-blue-700 px-5 py-2 text-sm rounded-md"
+        >
+          Crear perk
+        </Button>
       </div>
 
       <table className="w-full bg-white shadow rounded-lg">
@@ -69,7 +73,7 @@ export default function PerksPage() {
           <tr>
             <th className="text-left px-4 py-2">Nombre</th>
             <th className="text-left px-4 py-2">Descripción</th>
-            <th className="text-left px-4 py-2">Perks</th>
+            <th className="text-left px-4 py-2">Puntos</th>
             <th className="text-left px-4 py-2">Acciones</th>
           </tr>
         </thead>
@@ -82,7 +86,16 @@ export default function PerksPage() {
               <td className="px-4 py-2">
                 <div className="flex gap-2">
                   <Button className="px-3 py-1 text-sm">Editar</Button>
-                  <Button variant="destructive" className="px-3 py-1 text-sm">Eliminar</Button>
+                  <Button
+                    variant="destructive"
+                    className="px-3 py-1 text-sm"
+                    onClick={() => {
+                      setPerkAEliminar(perk)
+                      setConfirmarEliminacion(true)
+                    }}
+                  >
+                    Eliminar
+                  </Button>
                 </div>
               </td>
             </tr>
@@ -90,6 +103,7 @@ export default function PerksPage() {
         </tbody>
       </table>
 
+      {/* Modal para crear nuevo perk */}
       <Dialog open={modalAbierto} onOpenChange={setModalAbierto}>
         <DialogContent>
           <DialogHeader>
@@ -116,7 +130,7 @@ export default function PerksPage() {
               />
             </div>
             <div>
-              <label className="block text-sm font-medium mb-1">Perks necesarios</label>
+              <label className="block text-sm font-medium mb-1">Puntos necesarios</label>
               <input
                 type="number"
                 value={puntos}
@@ -126,25 +140,78 @@ export default function PerksPage() {
               />
             </div>
 
-<div className="flex justify-end gap-2 pt-2">
-  <Button
-    type="button"
-    variant="outline"
-    onClick={() => setModalAbierto(false)}
-    className="px-5 py-1.5 text-sm rounded-md"
-  >
-    Cancelar
-  </Button>
-  <Button
-    type="submit"
-    className="bg-blue-600 text-white hover:bg-blue-700 px-5 py-1.5 text-sm rounded-md"
-  >
-    Guardar
-  </Button>
-</div>
+            <div className="flex justify-end gap-2 pt-2">
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => setModalAbierto(false)}
+                className="px-5 py-1.5 text-sm rounded-md"
+              >
+                Cancelar
+              </Button>
+              <Button
+                type="submit"
+                className="bg-blue-600 text-white hover:bg-blue-700 px-5 py-1.5 text-sm rounded-md"
+              >
+                Guardar
+              </Button>
+            </div>
           </form>
+        </DialogContent>
+      </Dialog>
+
+      {/* Modal de confirmación de eliminación */}
+      <Dialog open={confirmarEliminacion} onOpenChange={setConfirmarEliminacion}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Eliminar perk</DialogTitle>
+          </DialogHeader>
+
+          <p className="text-sm">
+            ¿Estás seguro de que deseas eliminar el perk{' '}
+            <strong>{perkAEliminar?.nombre}</strong>?
+          </p>
+
+          <div className="flex justify-end gap-2 pt-4">
+            <Button
+              variant="outline"
+              onClick={() => setConfirmarEliminacion(false)}
+              className="px-5 py-1.5 text-sm"
+            >
+              Cancelar
+            </Button>
+            <Button
+              variant="destructive"
+              className="px-5 py-1.5 text-sm"
+              onClick={async () => {
+                if (!perkAEliminar) return
+                try {
+                  const res = await fetch(`/api/admin/perks/${perkAEliminar.id}`, {
+                    method: 'DELETE',
+                  })
+
+                  if (res.ok) {
+                    toast.success('Perk eliminado correctamente')
+                    setPerks((prev) =>
+                      prev.filter((p) => p.id !== perkAEliminar.id)
+                    )
+                    setConfirmarEliminacion(false)
+                    setPerkAEliminar(null)
+                  } else {
+                    const data = await res.json()
+                    toast.error(data.error || 'Error al eliminar')
+                  }
+                } catch {
+                  toast.error('Error de conexión con el servidor')
+                }
+              }}
+            >
+              Eliminar
+            </Button>
+          </div>
         </DialogContent>
       </Dialog>
     </div>
   )
 }
+
