@@ -16,11 +16,42 @@ export default function PerksPage() {
   const [perks, setPerks] = useState<Perk[]>([])
   const [modalAbierto, setModalAbierto] = useState(false)
 
+  const [nombre, setNombre] = useState('')
+  const [descripcion, setDescripcion] = useState('')
+  const [puntos, setPuntos] = useState(0)
+
   useEffect(() => {
     fetch('/api/admin/perks')
       .then(res => res.json())
       .then(data => setPerks(data))
   }, [])
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault()
+
+    try {
+      const res = await fetch('/api/admin/perks', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ nombre, descripcion, puntos }),
+      })
+
+      if (res.ok) {
+        const nuevo = await res.json()
+        setPerks((prev) => [...prev, nuevo])
+        toast.success('Perk creado correctamente')
+        setModalAbierto(false)
+        setNombre('')
+        setDescripcion('')
+        setPuntos(0)
+      } else {
+        const data = await res.json()
+        toast.error(data.error || 'Error al crear el perk')
+      }
+    } catch {
+      toast.error('Error de conexión con el servidor')
+    }
+  }
 
   return (
     <div>
@@ -57,23 +88,51 @@ export default function PerksPage() {
         </tbody>
       </table>
 
-      {/* Modal para crear nuevo perk (por ahora vacío, lo completamos luego) */}
       <Dialog open={modalAbierto} onOpenChange={setModalAbierto}>
         <DialogContent>
           <DialogHeader>
             <DialogTitle>Crear nuevo perk</DialogTitle>
           </DialogHeader>
 
-          <p className="text-sm text-gray-500">Aquí irá el formulario de creación</p>
+          <form onSubmit={handleSubmit} className="space-y-4">
+            <div>
+              <label className="block text-sm font-medium mb-1">Nombre</label>
+              <input
+                value={nombre}
+                onChange={(e) => setNombre(e.target.value)}
+                className="w-full border rounded px-3 py-2"
+                required
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium mb-1">Descripción</label>
+              <textarea
+                value={descripcion}
+                onChange={(e) => setDescripcion(e.target.value)}
+                className="w-full border rounded px-3 py-2"
+                required
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium mb-1">Puntos necesarios</label>
+              <input
+                type="number"
+                value={puntos}
+                onChange={(e) => setPuntos(Number(e.target.value))}
+                className="w-full border rounded px-3 py-2"
+                required
+              />
+            </div>
 
-          <div className="flex justify-end mt-4">
-            <Button variant="outline" onClick={() => setModalAbierto(false)} className="px-4 py-1.5 text-sm">
-              Cancelar
-            </Button>
-            <Button className="bg-blue-600 text-white ml-2 px-4 py-1.5 text-sm hover:bg-blue-700">
-              Guardar
-            </Button>
-          </div>
+            <div className="flex justify-end gap-2 pt-2">
+              <Button type="button" variant="outline" onClick={() => setModalAbierto(false)}>
+                Cancelar
+              </Button>
+              <Button type="submit" className="bg-blue-600 text-white hover:bg-blue-700">
+                Guardar
+              </Button>
+            </div>
+          </form>
         </DialogContent>
       </Dialog>
     </div>
