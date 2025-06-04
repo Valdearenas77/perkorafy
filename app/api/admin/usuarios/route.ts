@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 import jwt from 'jsonwebtoken'
+import bcrypt from 'bcryptjs'
 
 const JWT_SECRET = process.env.JWT_SECRET ?? 'clave_super_secreta'
 
@@ -54,12 +55,14 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Email no válido' }, { status: 400 })
     }
 
+    const hashedPassword = await bcrypt.hash(password, 10)
+
     const nuevoUsuario = await prisma.user.create({
       data: {
         name,
         email,
         perks: parseInt(perks, 10),
-        password,
+        password: hashedPassword,
       },
       select: {
         id: true,
@@ -75,3 +78,4 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: 'Error en el servidor' }, { status: 500 })
   }
 }
+
