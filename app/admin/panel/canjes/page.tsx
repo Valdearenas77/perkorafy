@@ -2,6 +2,8 @@
 
 import { useEffect, useState } from 'react'
 import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
+import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from '@/components/ui/select'
 import { toast } from 'sonner'
 
 type Canje = {
@@ -14,12 +16,50 @@ type Canje = {
 
 export default function CanjesPage() {
   const [canjes, setCanjes] = useState<Canje[]>([])
+  const [total, setTotal] = useState(0)
+  const [skip, setSkip] = useState(0)
+  const [loading, setLoading] = useState(false)
+
+  const [filtros, setFiltros] = useState({
+    usuario: '',
+    estado: '',
+    fechaInicio: '',
+    fechaFin: '',
+  })
+
+  const limit = 100
+
+  const fetchCanjes = async (append = false) => {
+    setLoading(true)
+
+    const params = new URLSearchParams()
+    if (filtros.usuario) params.append('usuario', filtros.usuario)
+    if (filtros.estado) params.append('estado', filtros.estado)
+    if (filtros.fechaInicio) params.append('fechaInicio', filtros.fechaInicio)
+    if (filtros.fechaFin) params.append('fechaFin', filtros.fechaFin)
+    params.append('skip', skip.toString())
+    params.append('limit', limit.toString())
+
+    const res = await fetch(`/api/admin/canjes?${params.toString()}`, {
+      cache: 'no-store',
+    })
+
+    const data = await res.json()
+    setCanjes((prev) => (append ? [...prev, ...data.canjes] : data.canjes))
+    setTotal(data.total)
+    setLoading(false)
+  }
 
   useEffect(() => {
-    fetch('/api/admin/canjes', { cache: 'no-store' })
-      .then((res) => res.json())
-      .then((data) => setCanjes(data))
-  }, [])
+    setSkip(0)
+    fetchCanjes(false)
+  }, [filtros])
+
+  const cargarMas = () => {
+    const nuevoSkip = skip + limit
+    setSkip(nuevoSkip)
+    fetchCanjes(true)
+  }
 
   const actualizarEstado = async (id: number, nuevoEstado: string) => {
     try {
@@ -48,9 +88,43 @@ export default function CanjesPage() {
   }
 
   return (
-    <div>
-      <h1 className="text-2xl font-semibold mb-4">Gestión de Canjes</h1>
+    <div className="p-4 space-y-4">
+      <h1 className="text-2xl font-semibold">Gestión de Canjes</h1>
 
+      {/* Filtros */}
+      <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
+        <Input
+          placeholder="Buscar usuario"
+          value={filtros.usuario}
+          onChange={(e) => setFiltros({ ...filtros, usuario: e.target.value })}
+        />
+        <Select value={filtros.estado} onValueChange={(estado) => setFiltros({ ...filtros, estado })}>
+          <SelectTrigger>
+            <SelectValue placeholder="Estado" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="">Todos</SelectItem>
+            <SelectItem value="pendiente">Pendiente</SelectItem>
+            <SelectItem value="aprobado">Aprobado</SelectItem>
+            <SelectItem value="rechazado">Rechazado</SelectItem>
+          </SelectContent>
+        </Select>
+        <Input
+          type="date"
+          value={filtros.fechaInicio}
+          onChange={(e) => setFiltros({ ...filtros, fechaInicio: e.target.value })}
+        />
+        <Input
+          type="date"
+          value={filtros.fechaFin}
+          onChange={(e) => setFiltros({ ...filtros, fechaFin: e.target.value })}
+        />
+        <Button onClick={() => fetchCanjes(false)} disabled={loading}>
+          Buscar
+        </Button>
+      </div>
+
+      {/* Tabla de canjes */}
       <table className="w-full bg-white shadow rounded-lg">
         <thead className="bg-gray-100">
           <tr>
@@ -92,6 +166,15 @@ export default function CanjesPage() {
           ))}
         </tbody>
       </table>
+
+      {/* Botón cargar más */}
+      {canjes.length < total && (
+        <div className="text-center mt-4">
+          <Button onClick={cargarMas} disabled={loading}>
+            {loading ? 'Cargando...' : 'Cargar más'}
+          </Button>
+        </div>
+      )}
     </div>
   )
 }
