@@ -19,13 +19,11 @@ export default function UsuariosPage() {
   const [nuevoPerk, setNuevoPerk] = useState<number>(0)
   const [abierto, setAbierto] = useState(false)
 
-  // Estados para creación manual
   const [crearAbierto, setCrearAbierto] = useState(false)
   const [nuevoNombre, setNuevoNombre] = useState('')
   const [nuevoEmail, setNuevoEmail] = useState('')
   const [nuevoPerks, setNuevoPerks] = useState(0)
 
-  // Estado para importar CSV (modal vacío por ahora)
   const [csvAbierto, setCsvAbierto] = useState(false)
 
   useEffect(() => {
@@ -104,8 +102,19 @@ export default function UsuariosPage() {
       <h1 className="text-2xl font-semibold">Gestión de Usuarios</h1>
 
       <div className="flex gap-4">
-        <Button onClick={() => setCrearAbierto(true)}>Crear usuario</Button>
-        <Button variant="outline" onClick={() => setCsvAbierto(true)}>Importar CSV</Button>
+        <Button
+          onClick={() => setCrearAbierto(true)}
+          className="px-3 py-1 text-sm bg-blue-600 text-white rounded-md hover:bg-blue-700"
+        >
+          Crear usuario
+        </Button>
+        <Button
+          variant="outline"
+          onClick={() => setCsvAbierto(true)}
+          className="px-3 py-1 text-sm rounded-md"
+        >
+          Importar CSV
+        </Button>
       </div>
 
       <table className="w-full bg-white shadow rounded-lg mt-4">
@@ -124,7 +133,10 @@ export default function UsuariosPage() {
               <td className="px-4 py-2">{usuario.email}</td>
               <td className="px-4 py-2">{usuario.perks}</td>
               <td className="px-4 py-2">
-                <Button className="px-4 py-1.5 text-sm" onClick={() => abrirModal(usuario)}>
+                <Button
+                  className="px-3 py-1 text-sm bg-blue-600 text-white rounded-md hover:bg-blue-700"
+                  onClick={() => abrirModal(usuario)}
+                >
                   Editar
                 </Button>
               </td>
@@ -156,8 +168,19 @@ export default function UsuariosPage() {
               />
 
               <div className="flex justify-end gap-2 pt-2">
-                <Button variant="outline" onClick={() => setAbierto(false)}>Cancelar</Button>
-                <Button onClick={guardarPerks}>Guardar</Button>
+                <Button
+                  variant="outline"
+                  onClick={() => setAbierto(false)}
+                  className="px-3 py-1 text-sm rounded-md"
+                >
+                  Cancelar
+                </Button>
+                <Button
+                  onClick={guardarPerks}
+                  className="px-3 py-1 text-sm bg-blue-600 text-white rounded-md hover:bg-blue-700"
+                >
+                  Guardar
+                </Button>
               </div>
             </div>
           )}
@@ -191,8 +214,19 @@ export default function UsuariosPage() {
             />
 
             <div className="flex justify-end gap-2 pt-2">
-              <Button variant="outline" onClick={() => setCrearAbierto(false)}>Cancelar</Button>
-              <Button onClick={crearUsuario}>Crear</Button>
+              <Button
+                variant="outline"
+                onClick={() => setCrearAbierto(false)}
+                className="px-3 py-1 text-sm rounded-md"
+              >
+                Cancelar
+              </Button>
+              <Button
+                onClick={crearUsuario}
+                className="px-3 py-1 text-sm bg-blue-600 text-white rounded-md hover:bg-blue-700"
+              >
+                Crear
+              </Button>
             </div>
           </div>
         </DialogContent>
@@ -211,3 +245,4 @@ export default function UsuariosPage() {
     </div>
   )
 }
+
