@@ -3,7 +3,6 @@
 import { useEffect, useState } from 'react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
-import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from '@/components/ui/select'
 import { toast } from 'sonner'
 
 type Canje = {
@@ -98,17 +97,18 @@ export default function CanjesPage() {
           value={filtros.usuario}
           onChange={(e) => setFiltros({ ...filtros, usuario: e.target.value })}
         />
-        <Select value={filtros.estado} onValueChange={(estado) => setFiltros({ ...filtros, estado })}>
-          <SelectTrigger>
-            <SelectValue placeholder="Estado" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="">Todos</SelectItem>
-            <SelectItem value="pendiente">Pendiente</SelectItem>
-            <SelectItem value="aprobado">Aprobado</SelectItem>
-            <SelectItem value="rechazado">Rechazado</SelectItem>
-          </SelectContent>
-        </Select>
+
+        <select
+          value={filtros.estado}
+          onChange={(e) => setFiltros({ ...filtros, estado: e.target.value })}
+          className="h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm text-foreground shadow-sm"
+        >
+          <option value="">Todos</option>
+          <option value="pendiente">Pendiente</option>
+          <option value="aprobado">Aprobado</option>
+          <option value="rechazado">Rechazado</option>
+        </select>
+
         <Input
           type="date"
           value={filtros.fechaInicio}
@@ -178,4 +178,3 @@ export default function CanjesPage() {
     </div>
   )
 }
-
