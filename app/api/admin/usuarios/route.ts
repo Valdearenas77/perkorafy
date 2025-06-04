@@ -43,9 +43,9 @@ export async function POST(req: NextRequest) {
     jwt.verify(token, JWT_SECRET)
 
     const body = await req.json()
-    const { name, email, perks } = body
+    const { name, email, perks, password } = body
 
-    if (!name || !email || perks === undefined) {
+    if (!name || !email || perks === undefined || !password) {
       return NextResponse.json({ error: 'Faltan campos obligatorios' }, { status: 400 })
     }
 
@@ -59,6 +59,7 @@ export async function POST(req: NextRequest) {
         name,
         email,
         perks: parseInt(perks, 10),
+        password,
       },
       select: {
         id: true,

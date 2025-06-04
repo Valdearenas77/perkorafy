@@ -24,6 +24,9 @@ export default function UsuariosPage() {
   const [nuevoEmail, setNuevoEmail] = useState('')
   const [nuevoPerks, setNuevoPerks] = useState(0)
 
+  const [passwordVisible, setPasswordVisible] = useState('')
+  const [passwordReal, setPasswordReal] = useState('')
+
   const [csvAbierto, setCsvAbierto] = useState(false)
 
   useEffect(() => {
@@ -64,7 +67,7 @@ export default function UsuariosPage() {
   }
 
   const crearUsuario = async () => {
-    if (!nuevoNombre || !nuevoEmail || nuevoPerks < 0) {
+    if (!nuevoNombre || !nuevoEmail || nuevoPerks < 0 || !passwordReal) {
       toast.error('Todos los campos son obligatorios')
       return
     }
@@ -77,6 +80,7 @@ export default function UsuariosPage() {
           name: nuevoNombre,
           email: nuevoEmail,
           perks: nuevoPerks,
+          password: passwordReal,
         }),
       })
 
@@ -88,6 +92,8 @@ export default function UsuariosPage() {
         setNuevoNombre('')
         setNuevoEmail('')
         setNuevoPerks(0)
+        setPasswordReal('')
+        setPasswordVisible('')
       } else {
         const data = await res.json()
         toast.error(data.error || 'Error al crear usuario')
@@ -95,6 +101,21 @@ export default function UsuariosPage() {
     } catch {
       toast.error('Error de conexión con el servidor')
     }
+  }
+
+  const handlePasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const char = e.target.value.slice(-1)
+    if (!char) return
+
+    setPasswordReal(prev => prev + char)
+    setPasswordVisible(prev => prev + char)
+
+    setTimeout(() => {
+      setPasswordVisible(prev => {
+        const masked = '*'.repeat(prev.length)
+        return masked
+      })
+    }, 2000)
   }
 
   return (
@@ -212,6 +233,12 @@ export default function UsuariosPage() {
               value={nuevoPerks}
               onChange={(e) => setNuevoPerks(Number(e.target.value))}
             />
+            <Input
+              placeholder="Contraseña"
+              type="text"
+              value={passwordVisible}
+              onChange={handlePasswordChange}
+            />
 
             <div className="flex justify-end gap-2 pt-2">
               <Button
@@ -232,7 +259,7 @@ export default function UsuariosPage() {
         </DialogContent>
       </Dialog>
 
-      {/* Modal importar CSV (contenido por hacer) */}
+      {/* Modal importar CSV (a implementar) */}
       <Dialog open={csvAbierto} onOpenChange={setCsvAbierto}>
         <DialogContent>
           <DialogHeader>
