@@ -49,10 +49,11 @@ export default function CanjesPage() {
     setLoading(false)
   }
 
+  // Solo actualiza automáticamente si se cambian estado o fechas
   useEffect(() => {
     setSkip(0)
     fetchCanjes(false)
-  }, [filtros])
+  }, [filtros.estado, filtros.fechaInicio, filtros.fechaFin])
 
   const cargarMas = () => {
     const nuevoSkip = skip + limit
@@ -119,7 +120,11 @@ export default function CanjesPage() {
           value={filtros.fechaFin}
           onChange={(e) => setFiltros({ ...filtros, fechaFin: e.target.value })}
         />
-        <Button onClick={() => fetchCanjes(false)} disabled={loading}>
+
+        <Button onClick={() => {
+          setSkip(0)
+          fetchCanjes(false)
+        }} disabled={loading}>
           Buscar
         </Button>
       </div>
