@@ -4,9 +4,11 @@ import { useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
+import { useRouter } from "next/navigation";
 
 export default function OlvideContrasenaPage() {
   const [email, setEmail] = useState("");
+  const router = useRouter();
 
   const handleSubmit = async () => {
     if (!email) {
@@ -23,7 +25,10 @@ export default function OlvideContrasenaPage() {
     const data = await res.json();
 
     if (res.ok) {
-      toast.success("Correo de recuperación enviado");
+      toast.success("Correo enviado. Revisa tu bandeja.");
+      setTimeout(() => {
+        router.push("/login");
+      }, 3000);
     } else {
       toast.error(data.error || "Ocurrió un error");
     }
