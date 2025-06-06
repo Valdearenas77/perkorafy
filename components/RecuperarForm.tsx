@@ -5,7 +5,7 @@ import { useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
-import { KeyRound } from "lucide-react"; // ícono de contraseña segura
+import { KeyRound, CheckCircle, XCircle } from "lucide-react";
 
 export default function RecuperarForm() {
   const searchParams = useSearchParams();
@@ -16,13 +16,9 @@ export default function RecuperarForm() {
   const [confirmarPassword, setConfirmarPassword] = useState("");
   const [cargando, setCargando] = useState(false);
 
-  const validarPassword = (password: string): boolean => {
-    return (
-      password.length >= 6 &&
-      /[A-Z]/.test(password) &&
-      /[0-9]/.test(password)
-    );
-  };
+  const cumpleLongitud = nuevaPassword.length >= 6;
+  const tieneMayuscula = /[A-Z]/.test(nuevaPassword);
+  const tieneNumero = /[0-9]/.test(nuevaPassword);
 
   const handleSubmit = async () => {
     if (!token) {
@@ -35,8 +31,8 @@ export default function RecuperarForm() {
       return;
     }
 
-    if (!validarPassword(nuevaPassword)) {
-      toast.error("La contraseña debe tener al menos 6 caracteres, una mayúscula y un número");
+    if (!(cumpleLongitud && tieneMayuscula && tieneNumero)) {
+      toast.error("La contraseña no cumple los requisitos mínimos");
       return;
     }
 
@@ -48,9 +44,8 @@ export default function RecuperarForm() {
       body: JSON.stringify({ token, nuevaPassword }),
     });
 
-    setCargando(false);
-
     const data = await res.json();
+    setCargando(false);
 
     if (res.ok) {
       toast.success("Contraseña actualizada. Redirigiendo al login...");
@@ -76,7 +71,7 @@ export default function RecuperarForm() {
         placeholder="Nueva contraseña"
         value={nuevaPassword}
         onChange={(e) => setNuevaPassword(e.target.value)}
-        className="mb-4"
+        className="mb-2"
       />
 
       <Input
@@ -86,6 +81,34 @@ export default function RecuperarForm() {
         onChange={(e) => setConfirmarPassword(e.target.value)}
         className="mb-4"
       />
+
+      <div className="text-left text-sm mb-4">
+        <p className="font-medium mb-1">Requisitos:</p>
+        <div className="flex items-center gap-2">
+          {cumpleLongitud ? (
+            <CheckCircle className="text-green-600 w-4 h-4" />
+          ) : (
+            <XCircle className="text-red-500 w-4 h-4" />
+          )}
+          <span>Mínimo 6 caracteres</span>
+        </div>
+        <div className="flex items-center gap-2">
+          {tieneMayuscula ? (
+            <CheckCircle className="text-green-600 w-4 h-4" />
+          ) : (
+            <XCircle className="text-red-500 w-4 h-4" />
+          )}
+          <span>Al menos una mayúscula</span>
+        </div>
+        <div className="flex items-center gap-2">
+          {tieneNumero ? (
+            <CheckCircle className="text-green-600 w-4 h-4" />
+          ) : (
+            <XCircle className="text-red-500 w-4 h-4" />
+          )}
+          <span>Al menos un número</span>
+        </div>
+      </div>
 
       <Button onClick={handleSubmit} disabled={cargando} className="w-full">
         {cargando ? "Guardando..." : "Guardar nueva contraseña"}
