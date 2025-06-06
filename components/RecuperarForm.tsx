@@ -1,6 +1,6 @@
 "use client";
 
-import { useSearchParams } from "next/navigation";
+import { useSearchParams, useRouter } from "next/navigation";
 import { useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -9,10 +9,19 @@ import { toast } from "sonner";
 export default function RecuperarForm() {
   const searchParams = useSearchParams();
   const token = searchParams.get("token");
+  const router = useRouter();
 
   const [nuevaPassword, setNuevaPassword] = useState("");
   const [confirmarPassword, setConfirmarPassword] = useState("");
   const [cargando, setCargando] = useState(false);
+
+  const validarPassword = (password: string): boolean => {
+    return (
+      password.length >= 6 &&
+      /[A-Z]/.test(password) &&
+      /[0-9]/.test(password)
+    );
+  };
 
   const handleSubmit = async () => {
     if (!token) {
@@ -22,6 +31,11 @@ export default function RecuperarForm() {
 
     if (nuevaPassword !== confirmarPassword) {
       toast.error("Las contraseñas no coinciden");
+      return;
+    }
+
+    if (!validarPassword(nuevaPassword)) {
+      toast.error("La contraseña debe tener al menos 6 caracteres, una mayúscula y un número");
       return;
     }
 
@@ -37,7 +51,10 @@ export default function RecuperarForm() {
     setCargando(false);
 
     if (res.ok) {
-      toast.success("Contraseña actualizada correctamente");
+      toast.success("Contraseña actualizada. Redirigiendo al login...");
+      setTimeout(() => {
+        router.push("/login");
+      }, 3000);
     } else {
       toast.error(data.error || "Error al actualizar la contraseña");
     }
