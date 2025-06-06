@@ -5,6 +5,7 @@ import { useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
+import { KeyRound } from "lucide-react"; // ícono de contraseña segura
 
 export default function RecuperarForm() {
   const searchParams = useSearchParams();
@@ -47,7 +48,6 @@ export default function RecuperarForm() {
       body: JSON.stringify({ token, nuevaPassword }),
     });
 
-    const data = await res.json();
     setCargando(false);
 
     if (res.ok) {
@@ -61,8 +61,13 @@ export default function RecuperarForm() {
   };
 
   return (
-    <div className="max-w-md mx-auto mt-20 p-4 border rounded-xl shadow">
-      <h1 className="text-2xl font-bold mb-4">Restablecer contraseña</h1>
+    <div className="max-w-md mx-auto mt-20 p-6 border rounded-xl shadow text-center">
+      <KeyRound className="mx-auto mb-4 w-10 h-10 text-blue-500" />
+
+      <h1 className="text-2xl font-bold mb-2">Restablecer contraseña</h1>
+      <p className="text-sm text-gray-500 mb-6">
+        Introduce una nueva contraseña para tu cuenta.
+      </p>
 
       <Input
         type="password"
@@ -86,3 +91,4 @@ export default function RecuperarForm() {
     </div>
   );
 }
+
