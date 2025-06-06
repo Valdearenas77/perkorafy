@@ -50,6 +50,8 @@ export default function RecuperarForm() {
 
     setCargando(false);
 
+    const data = await res.json();
+
     if (res.ok) {
       toast.success("Contraseña actualizada. Redirigiendo al login...");
       setTimeout(() => {
