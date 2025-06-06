@@ -111,12 +111,14 @@ export default function UsuariosPage() {
     setPasswordVisible(prev => prev + char)
 
     setTimeout(() => {
-      setPasswordVisible(prev => {
-        const masked = '*'.repeat(prev.length)
-        return masked
-      })
+      setPasswordVisible(prev => '*'.repeat(prev.length))
     }, 2000)
   }
+
+  const cumpleLongitud = passwordReal.length >= 6
+  const tieneMayuscula = /[A-Z]/.test(passwordReal)
+  const tieneNumero = /[0-9]/.test(passwordReal)
+  const passwordValida = cumpleLongitud && tieneMayuscula && tieneNumero
 
   return (
     <div className="p-4 space-y-4">
@@ -233,12 +235,27 @@ export default function UsuariosPage() {
               value={nuevoPerks}
               onChange={(e) => setNuevoPerks(Number(e.target.value))}
             />
-            <Input
-              placeholder="Contraseña"
-              type="text"
-              value={passwordVisible}
-              onChange={handlePasswordChange}
-            />
+
+            <div>
+              <Input
+                placeholder="Contraseña"
+                type="text"
+                value={passwordVisible}
+                onChange={handlePasswordChange}
+              />
+
+              <div className="text-sm mt-2 space-y-1 text-left">
+                <p className={cumpleLongitud ? "text-green-600" : "text-red-500"}>
+                  • Mínimo 6 caracteres
+                </p>
+                <p className={tieneMayuscula ? "text-green-600" : "text-red-500"}>
+                  • Al menos una mayúscula
+                </p>
+                <p className={tieneNumero ? "text-green-600" : "text-red-500"}>
+                  • Al menos un número
+                </p>
+              </div>
+            </div>
 
             <div className="flex justify-end gap-2 pt-2">
               <Button
@@ -250,7 +267,8 @@ export default function UsuariosPage() {
               </Button>
               <Button
                 onClick={crearUsuario}
-                className="px-3 py-1 text-sm bg-blue-600 text-white rounded-md hover:bg-blue-700"
+                disabled={!passwordValida}
+                className="px-3 py-1 text-sm bg-blue-600 text-white rounded-md hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 Crear
               </Button>
