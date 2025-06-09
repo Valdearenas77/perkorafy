@@ -1,10 +1,16 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog'
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog'
 import { toast } from 'sonner'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
+import { UserActions } from '@/components/admin/UserActions'
 
 type Usuario = {
   id: number
@@ -31,8 +37,8 @@ export default function UsuariosPage() {
 
   useEffect(() => {
     fetch('/api/admin/usuarios')
-      .then(res => res.json())
-      .then(data => setUsuarios(data))
+      .then((res) => res.json())
+      .then((data) => setUsuarios(data))
   }, [])
 
   const abrirModal = (usuario: Usuario) => {
@@ -53,7 +59,9 @@ export default function UsuariosPage() {
       if (res.ok) {
         toast.success('Perks actualizados')
         setUsuarios((prev) =>
-          prev.map((u) => (u.id === usuarioActivo.id ? { ...u, perks: nuevoPerk } : u))
+          prev.map((u) =>
+            u.id === usuarioActivo.id ? { ...u, perks: nuevoPerk } : u
+          )
         )
         setAbierto(false)
         window.location.href = '/admin/panel/dashboard'
@@ -107,12 +115,26 @@ export default function UsuariosPage() {
     const char = e.target.value.slice(-1)
     if (!char) return
 
-    setPasswordReal(prev => prev + char)
-    setPasswordVisible(prev => prev + char)
+    setPasswordReal((prev) => prev + char)
+    setPasswordVisible((prev) => prev + char)
 
     setTimeout(() => {
-      setPasswordVisible(prev => '*'.repeat(prev.length))
+      setPasswordVisible((prev) => '*'.repeat(prev.length))
     }, 2000)
+  }
+
+  const handleEditar = (usuario: Usuario) => abrirModal(usuario)
+
+  const handleResetPassword = (usuario: Usuario) => {
+    toast.info(`Resetear contraseña para ${usuario.email}`)
+    // Aquí puedes lanzar modal o generar token
+  }
+
+  const handleEliminar = (usuario: Usuario) => {
+    if (confirm(`¿Seguro que deseas eliminar a ${usuario.name}?`)) {
+      toast.info(`Usuario ${usuario.email} eliminado`)
+      // Aquí puedes implementar eliminación real vía API
+    }
   }
 
   const cumpleLongitud = passwordReal.length >= 6
@@ -146,7 +168,7 @@ export default function UsuariosPage() {
             <th className="text-left px-4 py-2">Nombre</th>
             <th className="text-left px-4 py-2">Email</th>
             <th className="text-left px-4 py-2">Perks</th>
-            <th className="text-left px-4 py-2">Acciones</th>
+            <th className="text-right px-4 py-2">Acciones</th>
           </tr>
         </thead>
         <tbody>
@@ -155,20 +177,19 @@ export default function UsuariosPage() {
               <td className="px-4 py-2">{usuario.name}</td>
               <td className="px-4 py-2">{usuario.email}</td>
               <td className="px-4 py-2">{usuario.perks}</td>
-              <td className="px-4 py-2">
-                <Button
-                  className="px-3 py-1 text-sm bg-blue-600 text-white rounded-md hover:bg-blue-700"
-                  onClick={() => abrirModal(usuario)}
-                >
-                  Editar
-                </Button>
+              <td className="px-4 py-2 text-right">
+                <UserActions
+                  onEdit={() => handleEditar(usuario)}
+                  onResetPassword={() => handleResetPassword(usuario)}
+                  onDelete={() => handleEliminar(usuario)}
+                />
               </td>
             </tr>
           ))}
         </tbody>
       </table>
 
-      {/* Modal editar perks */}
+      {/* modal perks */}
       <Dialog open={abierto} onOpenChange={setAbierto}>
         <DialogContent>
           <DialogHeader>
@@ -191,17 +212,10 @@ export default function UsuariosPage() {
               />
 
               <div className="flex justify-end gap-2 pt-2">
-                <Button
-                  variant="outline"
-                  onClick={() => setAbierto(false)}
-                  className="px-3 py-1 text-sm rounded-md"
-                >
+                <Button variant="outline" onClick={() => setAbierto(false)}>
                   Cancelar
                 </Button>
-                <Button
-                  onClick={guardarPerks}
-                  className="px-3 py-1 text-sm bg-blue-600 text-white rounded-md hover:bg-blue-700"
-                >
+                <Button onClick={guardarPerks} className="bg-blue-600 text-white hover:bg-blue-700">
                   Guardar
                 </Button>
               </div>
@@ -210,7 +224,7 @@ export default function UsuariosPage() {
         </DialogContent>
       </Dialog>
 
-      {/* Modal crear usuario */}
+      {/* modal crear */}
       <Dialog open={crearAbierto} onOpenChange={setCrearAbierto}>
         <DialogContent>
           <DialogHeader>
@@ -245,30 +259,26 @@ export default function UsuariosPage() {
               />
 
               <div className="text-sm mt-2 space-y-1 text-left">
-                <p className={cumpleLongitud ? "text-green-600" : "text-red-500"}>
+                <p className={cumpleLongitud ? 'text-green-600' : 'text-red-500'}>
                   • Mínimo 6 caracteres
                 </p>
-                <p className={tieneMayuscula ? "text-green-600" : "text-red-500"}>
+                <p className={tieneMayuscula ? 'text-green-600' : 'text-red-500'}>
                   • Al menos una mayúscula
                 </p>
-                <p className={tieneNumero ? "text-green-600" : "text-red-500"}>
+                <p className={tieneNumero ? 'text-green-600' : 'text-red-500'}>
                   • Al menos un número
                 </p>
               </div>
             </div>
 
             <div className="flex justify-end gap-2 pt-2">
-              <Button
-                variant="outline"
-                onClick={() => setCrearAbierto(false)}
-                className="px-3 py-1 text-sm rounded-md"
-              >
+              <Button variant="outline" onClick={() => setCrearAbierto(false)}>
                 Cancelar
               </Button>
               <Button
                 onClick={crearUsuario}
                 disabled={!passwordValida}
-                className="px-3 py-1 text-sm bg-blue-600 text-white rounded-md hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
+                className="bg-blue-600 text-white hover:bg-blue-700 disabled:opacity-50"
               >
                 Crear
               </Button>
@@ -277,7 +287,7 @@ export default function UsuariosPage() {
         </DialogContent>
       </Dialog>
 
-      {/* Modal importar CSV (a implementar) */}
+      {/* modal CSV */}
       <Dialog open={csvAbierto} onOpenChange={setCsvAbierto}>
         <DialogContent>
           <DialogHeader>
