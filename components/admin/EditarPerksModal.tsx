@@ -1,21 +1,20 @@
 'use client'
 
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog'
-import { useState, useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { toast } from 'sonner'
 
 type EditarPerksModalProps = {
   open: boolean
   onClose: () => void
   usuario: { id: number; name: string; perks: number }
-  refresh: () => void
+  refresh: () => void // función para recargar los datos después de guardar
 }
 
 export function EditarPerksModal({ open, onClose, usuario, refresh }: EditarPerksModalProps) {
   const [nuevoPerk, setNuevoPerk] = useState(usuario.perks)
   const [cargando, setCargando] = useState(false)
 
-  // Sincroniza perks al abrir modal para evitar valores obsoletos
   useEffect(() => {
     if (open) {
       setNuevoPerk(usuario.perks)
@@ -49,7 +48,9 @@ export function EditarPerksModal({ open, onClose, usuario, refresh }: EditarPerk
   }
 
   return (
-    <Dialog open={open} onOpenChange={(estado) => { if (!estado) onClose() }}>
+    <Dialog open={open} onOpenChange={(estado) => {
+      if (!estado) onClose()
+    }}>
       <DialogContent className="max-w-md">
         <DialogHeader>
           <DialogTitle>Editar perks de {usuario.name}</DialogTitle>
@@ -67,7 +68,7 @@ export function EditarPerksModal({ open, onClose, usuario, refresh }: EditarPerk
           </div>
           <div className="flex justify-end gap-3">
             <button
-              onClick={() => onClose()}
+              onClick={onClose}
               className="bg-gray-300 text-black text-sm px-4 py-1.5 rounded-md hover:bg-gray-400 transition"
               disabled={cargando}
             >
@@ -86,3 +87,4 @@ export function EditarPerksModal({ open, onClose, usuario, refresh }: EditarPerk
     </Dialog>
   )
 }
+
