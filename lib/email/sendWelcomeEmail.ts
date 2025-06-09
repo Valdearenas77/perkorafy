@@ -48,7 +48,7 @@ export async function sendWelcomeEmail({
   const logoPath = path.join(process.cwd(), "public/images/logo.png");
 
   const mailOptions = {
-    from: `"Perkorafy" <${process.env.SMTP_FROM!}>`,
+    from: `"Perkorafy" <${process.env.SMTP_USER!}>`,
     to: email,
     subject: "¡Bienvenido/a a Perkorafy!",
     html: htmlContent,
