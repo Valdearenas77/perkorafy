@@ -21,7 +21,7 @@ export function UserActions({
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button variant="outline" size="icon">
+        <Button variant="outline" className="h-8 w-8 p-0">
           <MoreHorizontal className="h-5 w-5" />
         </Button>
       </DropdownMenuTrigger>
