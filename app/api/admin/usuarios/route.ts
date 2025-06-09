@@ -1,20 +1,21 @@
-import { NextRequest, NextResponse } from 'next/server'
-import { prisma } from '@/lib/prisma'
-import jwt from 'jsonwebtoken'
-import bcrypt from 'bcryptjs'
+import { NextRequest, NextResponse } from 'next/server';
+import { prisma } from '@/lib/prisma';
+import jwt from 'jsonwebtoken';
+import bcrypt from 'bcryptjs';
+import { sendWelcomeEmail } from '@/lib/email/sendWelcomeEmail';
 
-const JWT_SECRET = process.env.JWT_SECRET ?? 'clave_super_secreta'
+const JWT_SECRET = process.env.JWT_SECRET ?? 'clave_super_secreta';
 
 // GET: Listar usuarios
 export async function GET(req: NextRequest) {
-  const token = req.cookies.get('adminToken')?.value
+  const token = req.cookies.get('adminToken')?.value;
 
   if (!token) {
-    return NextResponse.json({ error: 'No autenticado' }, { status: 401 })
+    return NextResponse.json({ error: 'No autenticado' }, { status: 401 });
   }
 
   try {
-    jwt.verify(token, JWT_SECRET)
+    jwt.verify(token, JWT_SECRET);
 
     const usuarios = await prisma.user.findMany({
       select: {
@@ -23,39 +24,39 @@ export async function GET(req: NextRequest) {
         email: true,
         perks: true,
       },
-    })
+    });
 
-    return NextResponse.json(usuarios)
+    return NextResponse.json(usuarios);
   } catch (err) {
-    console.error('[API ADMIN USUARIOS]', err)
-    return NextResponse.json({ error: 'Token inválido' }, { status: 401 })
+    console.error('[API ADMIN USUARIOS]', err);
+    return NextResponse.json({ error: 'Token inválido' }, { status: 401 });
   }
 }
 
 // POST: Crear nuevo usuario
 export async function POST(req: NextRequest) {
-  const token = req.cookies.get('adminToken')?.value
+  const token = req.cookies.get('adminToken')?.value;
 
   if (!token) {
-    return NextResponse.json({ error: 'No autenticado' }, { status: 401 })
+    return NextResponse.json({ error: 'No autenticado' }, { status: 401 });
   }
 
   try {
-    jwt.verify(token, JWT_SECRET)
+    jwt.verify(token, JWT_SECRET);
 
-    const body = await req.json()
-    const { name, email, perks, password } = body
+    const body = await req.json();
+    const { name, email, perks, password } = body;
 
     if (!name || !email || perks === undefined || !password) {
-      return NextResponse.json({ error: 'Faltan campos obligatorios' }, { status: 400 })
+      return NextResponse.json({ error: 'Faltan campos obligatorios' }, { status: 400 });
     }
 
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(email)) {
-      return NextResponse.json({ error: 'Email no válido' }, { status: 400 })
+      return NextResponse.json({ error: 'Email no válido' }, { status: 400 });
     }
 
-    const hashedPassword = await bcrypt.hash(password, 10)
+    const hashedPassword = await bcrypt.hash(password, 10);
 
     const nuevoUsuario = await prisma.user.create({
       data: {
@@ -70,12 +71,20 @@ export async function POST(req: NextRequest) {
         email: true,
         perks: true,
       },
-    })
+    });
 
-    return NextResponse.json(nuevoUsuario, { status: 201 })
+    // Enviar correo de bienvenida (nombre real)
+    try {
+      await sendWelcomeEmail({ nombre: nuevoUsuario.name, email: nuevoUsuario.email });
+    } catch (emailError) {
+      console.error('[EMAIL ERROR] Error enviando correo de bienvenida:', emailError);
+      // No detenemos la creación por fallo de correo
+    }
+
+    return NextResponse.json(nuevoUsuario, { status: 201 });
   } catch (err) {
-    console.error('[API ADMIN USUARIOS POST]', err)
-    return NextResponse.json({ error: 'Error en el servidor' }, { status: 500 })
+    console.error('[API ADMIN USUARIOS POST]', err);
+    return NextResponse.json({ error: 'Error en el servidor' }, { status: 500 });
   }
 }
 
