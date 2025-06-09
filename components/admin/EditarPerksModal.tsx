@@ -1,7 +1,7 @@
 'use client'
 
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog'
-import { useEffect, useState } from 'react'
+import { useState, useEffect } from 'react'
 import { toast } from 'sonner'
 
 type EditarPerksModalProps = {
@@ -15,12 +15,12 @@ export function EditarPerksModal({ open, onClose, usuario, refresh }: EditarPerk
   const [nuevoPerk, setNuevoPerk] = useState(usuario.perks)
   const [cargando, setCargando] = useState(false)
 
-  // 🔁 Reinicia el estado cada vez que se abre el modal o cambia de usuario
+  // Sincroniza perks al abrir modal para evitar valores obsoletos
   useEffect(() => {
     if (open) {
       setNuevoPerk(usuario.perks)
     }
-  }, [open, usuario])
+  }, [open, usuario.perks])
 
   const handleGuardar = async () => {
     setCargando(true)
@@ -49,7 +49,7 @@ export function EditarPerksModal({ open, onClose, usuario, refresh }: EditarPerk
   }
 
   return (
-    <Dialog open={open} onOpenChange={onClose}>
+    <Dialog open={open} onOpenChange={(estado) => { if (!estado) onClose() }}>
       <DialogContent className="max-w-md">
         <DialogHeader>
           <DialogTitle>Editar perks de {usuario.name}</DialogTitle>
@@ -61,16 +61,13 @@ export function EditarPerksModal({ open, onClose, usuario, refresh }: EditarPerk
               type="number"
               min={0}
               value={nuevoPerk}
-              onChange={(e) => setNuevoPerk(Number(e.target.value))}
+              onChange={(e) => setNuevoPerk(parseInt(e.target.value))}
               className="w-full border border-gray-300 rounded-md px-3 py-2"
             />
           </div>
           <div className="flex justify-end gap-3">
             <button
-              onClick={() => {
-                setNuevoPerk(usuario.perks) // restaura valor original
-                onClose()
-              }}
+              onClick={() => onClose()}
               className="bg-gray-300 text-black text-sm px-4 py-1.5 rounded-md hover:bg-gray-400 transition"
               disabled={cargando}
             >
