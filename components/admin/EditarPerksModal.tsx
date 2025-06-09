@@ -1,7 +1,7 @@
 'use client'
 
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog'
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import { toast } from 'sonner'
 
 type EditarPerksModalProps = {
@@ -12,18 +12,8 @@ type EditarPerksModalProps = {
 }
 
 export function EditarPerksModal({ open, onClose, usuario, refresh }: EditarPerksModalProps) {
-  const [isOpen, setIsOpen] = useState(open)
   const [nuevoPerk, setNuevoPerk] = useState(usuario.perks)
   const [cargando, setCargando] = useState(false)
-
-  useEffect(() => {
-    setIsOpen(open)
-  }, [open])
-
-  const cerrarModal = () => {
-    setIsOpen(false)
-    setTimeout(onClose, 100) // pequeño retardo para desmontar con transición
-  }
 
   const handleGuardar = async () => {
     setCargando(true)
@@ -38,7 +28,7 @@ export function EditarPerksModal({ open, onClose, usuario, refresh }: EditarPerk
 
       if (res.ok) {
         toast.success('Perks actualizados correctamente')
-        cerrarModal()
+        onClose()
         refresh()
       } else {
         toast.error(data.error || 'Error al actualizar los perks')
@@ -51,8 +41,11 @@ export function EditarPerksModal({ open, onClose, usuario, refresh }: EditarPerk
     }
   }
 
+  // 🚨 Previene que el modal quede bloqueando la interfaz
+  if (!open) return null
+
   return (
-    <Dialog open={isOpen} onOpenChange={(open) => !open && cerrarModal()}>
+    <Dialog open={open} onOpenChange={(val) => !val && onClose()}>
       <DialogContent className="max-w-md">
         <DialogHeader>
           <DialogTitle>Editar perks de {usuario.name}</DialogTitle>
@@ -70,7 +63,7 @@ export function EditarPerksModal({ open, onClose, usuario, refresh }: EditarPerk
           </div>
           <div className="flex justify-end gap-3">
             <button
-              onClick={cerrarModal}
+              onClick={onClose}
               className="bg-gray-300 text-black text-sm px-4 py-1.5 rounded-md hover:bg-gray-400 transition"
               disabled={cargando}
             >
@@ -89,4 +82,3 @@ export function EditarPerksModal({ open, onClose, usuario, refresh }: EditarPerk
     </Dialog>
   )
 }
-
