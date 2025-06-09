@@ -1,21 +1,40 @@
 'use client'
 
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog'
-import { useState } from 'react'
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog'
+import { useEffect, useState } from 'react'
 import { toast } from 'sonner'
 
 type EditarPerksModalProps = {
   open: boolean
   onClose: () => void
-  usuario: { id: number; name: string; perks: number }
+  usuario: { id: number; name: string; perks: number } | null
   refresh: () => void
 }
 
-export function EditarPerksModal({ open, onClose, usuario, refresh }: EditarPerksModalProps) {
-  const [nuevoPerk, setNuevoPerk] = useState(usuario.perks)
+export function EditarPerksModal({
+  open,
+  onClose,
+  usuario,
+  refresh,
+}: EditarPerksModalProps) {
+  const [nuevoPerk, setNuevoPerk] = useState(0)
   const [cargando, setCargando] = useState(false)
 
+  // Reiniciar perk al abrir el modal
+  useEffect(() => {
+    if (open && usuario) {
+      setNuevoPerk(usuario.perks)
+    }
+  }, [open, usuario])
+
   const handleGuardar = async () => {
+    if (!usuario) return
+
     setCargando(true)
     try {
       const res = await fetch(`/api/admin/usuarios/${usuario.id}/perks`, {
@@ -41,44 +60,46 @@ export function EditarPerksModal({ open, onClose, usuario, refresh }: EditarPerk
     }
   }
 
-  // 🚨 Previene que el modal quede bloqueando la interfaz
-  if (!open) return null
-
   return (
-    <Dialog open={open} onOpenChange={(val) => !val && onClose()}>
-      <DialogContent className="max-w-md">
-        <DialogHeader>
-          <DialogTitle>Editar perks de {usuario.name}</DialogTitle>
-        </DialogHeader>
-        <div className="mt-4 space-y-4">
-          <div>
-            <label className="block mb-1 font-medium">Cantidad de perks</label>
-            <input
-              type="number"
-              min={0}
-              value={nuevoPerk}
-              onChange={(e) => setNuevoPerk(parseInt(e.target.value))}
-              className="w-full border border-gray-300 rounded-md px-3 py-2"
-            />
-          </div>
-          <div className="flex justify-end gap-3">
-            <button
-              onClick={onClose}
-              className="bg-gray-300 text-black text-sm px-4 py-1.5 rounded-md hover:bg-gray-400 transition"
-              disabled={cargando}
-            >
-              Cancelar
-            </button>
-            <button
-              onClick={handleGuardar}
-              className="bg-blue-600 text-white text-sm px-4 py-1.5 rounded-md hover:bg-blue-700 transition"
-              disabled={cargando}
-            >
-              Guardar
-            </button>
-          </div>
-        </div>
+    <Dialog open={open} onOpenChange={(estado) => !estado && onClose()}>
+      <DialogContent className="max-w-md" onInteractOutside={(e) => e.preventDefault()}>
+        {usuario && (
+          <>
+            <DialogHeader>
+              <DialogTitle>Editar perks de {usuario.name}</DialogTitle>
+            </DialogHeader>
+            <div className="mt-4 space-y-4">
+              <div>
+                <label className="block mb-1 font-medium">Cantidad de perks</label>
+                <input
+                  type="number"
+                  min={0}
+                  value={nuevoPerk}
+                  onChange={(e) => setNuevoPerk(parseInt(e.target.value) || 0)}
+                  className="w-full border border-gray-300 rounded-md px-3 py-2"
+                />
+              </div>
+              <div className="flex justify-end gap-3">
+                <button
+                  onClick={onClose}
+                  className="bg-gray-300 text-black text-sm px-4 py-1.5 rounded-md hover:bg-gray-400 transition"
+                  disabled={cargando}
+                >
+                  Cancelar
+                </button>
+                <button
+                  onClick={handleGuardar}
+                  className="bg-blue-600 text-white text-sm px-4 py-1.5 rounded-md hover:bg-blue-700 transition"
+                  disabled={cargando}
+                >
+                  Guardar
+                </button>
+              </div>
+            </div>
+          </>
+        )}
       </DialogContent>
     </Dialog>
   )
 }
+
