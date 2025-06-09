@@ -12,13 +12,18 @@ type EditarPerksModalProps = {
 }
 
 export function EditarPerksModal({ open, onClose, usuario, refresh }: EditarPerksModalProps) {
+  const [isOpen, setIsOpen] = useState(open)
   const [nuevoPerk, setNuevoPerk] = useState(usuario.perks)
   const [cargando, setCargando] = useState(false)
 
-  // Resetear el valor cuando cambia el usuario o al abrir el modal
   useEffect(() => {
-    if (open) setNuevoPerk(usuario.perks)
-  }, [open, usuario.perks])
+    setIsOpen(open)
+  }, [open])
+
+  const cerrarModal = () => {
+    setIsOpen(false)
+    setTimeout(onClose, 100) // pequeño retardo para desmontar con transición
+  }
 
   const handleGuardar = async () => {
     setCargando(true)
@@ -33,7 +38,7 @@ export function EditarPerksModal({ open, onClose, usuario, refresh }: EditarPerk
 
       if (res.ok) {
         toast.success('Perks actualizados correctamente')
-        onClose()
+        cerrarModal()
         refresh()
       } else {
         toast.error(data.error || 'Error al actualizar los perks')
@@ -47,7 +52,7 @@ export function EditarPerksModal({ open, onClose, usuario, refresh }: EditarPerk
   }
 
   return (
-    <Dialog open={open} onOpenChange={(value) => !value && onClose()}>
+    <Dialog open={isOpen} onOpenChange={(open) => !open && cerrarModal()}>
       <DialogContent className="max-w-md">
         <DialogHeader>
           <DialogTitle>Editar perks de {usuario.name}</DialogTitle>
@@ -65,15 +70,13 @@ export function EditarPerksModal({ open, onClose, usuario, refresh }: EditarPerk
           </div>
           <div className="flex justify-end gap-3">
             <button
-              type="button"
-              onClick={onClose}
+              onClick={cerrarModal}
               className="bg-gray-300 text-black text-sm px-4 py-1.5 rounded-md hover:bg-gray-400 transition"
               disabled={cargando}
             >
               Cancelar
             </button>
             <button
-              type="button"
               onClick={handleGuardar}
               className="bg-blue-600 text-white text-sm px-4 py-1.5 rounded-md hover:bg-blue-700 transition"
               disabled={cargando}
