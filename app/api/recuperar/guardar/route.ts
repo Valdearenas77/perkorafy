@@ -1,6 +1,9 @@
 import { prisma } from "@/lib/prisma";
 import bcrypt from "bcryptjs";
+import jwt from "jsonwebtoken";
 import { NextResponse } from "next/server";
+
+const JWT_SECRET = process.env.JWT_SECRET ?? 'clave_super_secreta';
 
 export async function POST(req: Request) {
   try {
@@ -10,27 +13,25 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "Faltan datos" }, { status: 400 });
     }
 
-    const user = await prisma.user.findFirst({
-      where: {
-        resetToken: token,
-        resetTokenExp: {
-          gt: new Date(), // aún no ha expirado
-        },
-      },
-    });
+    let payload;
+    try {
+      payload = jwt.verify(token, JWT_SECRET) as { email: string };
+    } catch (err) {
+      return NextResponse.json({ error: "Token inválido o expirado" }, { status: 400 });
+    }
+
+    const user = await prisma.user.findUnique({ where: { email: payload.email } });
 
     if (!user) {
-      return NextResponse.json({ error: "Token inválido o expirado" }, { status: 400 });
+      return NextResponse.json({ error: "Usuario no encontrado" }, { status: 404 });
     }
 
     const hashedPassword = await bcrypt.hash(nuevaPassword, 10);
 
     await prisma.user.update({
-      where: { id: user.id },
+      where: { email: payload.email },
       data: {
         password: hashedPassword,
-        resetToken: null,
-        resetTokenExp: null,
       },
     });
 
