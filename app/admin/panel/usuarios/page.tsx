@@ -125,17 +125,42 @@ export default function UsuariosPage() {
 
   const handleEditar = (usuario: Usuario) => abrirModal(usuario)
 
-  const handleResetPassword = (usuario: Usuario) => {
-    toast.info(`Resetear contraseña para ${usuario.email}`)
-    // Aquí puedes lanzar modal o generar token
-  }
+const handleResetPassword = async (usuario: Usuario) => {
+  try {
+    const res = await fetch(`/api/admin/usuarios/${usuario.id}/reset-password`, {
+      method: "POST",
+    });
 
-  const handleEliminar = (usuario: Usuario) => {
-    if (confirm(`¿Seguro que deseas eliminar a ${usuario.name}?`)) {
-      toast.info(`Usuario ${usuario.email} eliminado`)
-      // Aquí puedes implementar eliminación real vía API
+    if (res.ok) {
+      toast.success(`Email de recuperación enviado a ${usuario.email}`);
+    } else {
+      const data = await res.json();
+      toast.error(data.error || "Error al generar token");
     }
+  } catch (error) {
+    toast.error("Error de red al intentar resetear la contraseña");
   }
+};
+
+const handleEliminar = async (usuario: Usuario) => {
+  if (!confirm(`¿Estás seguro de que quieres eliminar a ${usuario.name}? Esta acción no se puede deshacer.`)) return;
+
+  try {
+    const res = await fetch(`/api/admin/usuarios/${usuario.id}`, {
+      method: "DELETE",
+    });
+
+    if (res.ok) {
+      toast.success("Usuario eliminado correctamente");
+      setUsuarios((prev) => prev.filter((u) => u.id !== usuario.id));
+    } else {
+      const data = await res.json();
+      toast.error(data.error || "Error al eliminar el usuario");
+    }
+  } catch {
+    toast.error("Error de red al intentar eliminar el usuario");
+  }
+};
 
   const cumpleLongitud = passwordReal.length >= 6
   const tieneMayuscula = /[A-Z]/.test(passwordReal)
