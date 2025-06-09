@@ -75,11 +75,12 @@ export async function POST(req: NextRequest) {
 
     // Enviar correo de bienvenida (nombre real)
     try {
-      await sendWelcomeEmail({ nombre: nuevoUsuario.name, email: nuevoUsuario.email });
-    } catch (emailError) {
-      console.error('[EMAIL ERROR] Error enviando correo de bienvenida:', emailError);
-      // No detenemos la creación por fallo de correo
-    }
+         console.log('[API] Llamando a sendWelcomeEmail...');
+         await sendWelcomeEmail({ nombre: nuevoUsuario.name, email: nuevoUsuario.email });
+         console.log('[API] Correo enviado con éxito.');
+         } catch (emailError) {
+     console.error('[EMAIL ERROR] Error enviando correo de bienvenida:', emailError);
+     }
 
     return NextResponse.json(nuevoUsuario, { status: 201 });
   } catch (err) {
