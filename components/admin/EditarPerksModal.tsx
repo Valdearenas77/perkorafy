@@ -1,19 +1,26 @@
 'use client'
 
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { toast } from 'sonner'
 
 type EditarPerksModalProps = {
   open: boolean
   onClose: () => void
   usuario: { id: number; name: string; perks: number }
-  refresh: () => void // función para recargar los datos después de guardar
+  refresh: () => void
 }
 
 export function EditarPerksModal({ open, onClose, usuario, refresh }: EditarPerksModalProps) {
   const [nuevoPerk, setNuevoPerk] = useState(usuario.perks)
   const [cargando, setCargando] = useState(false)
+
+  // 🔁 Reinicia el estado cada vez que se abre el modal o cambia de usuario
+  useEffect(() => {
+    if (open) {
+      setNuevoPerk(usuario.perks)
+    }
+  }, [open, usuario])
 
   const handleGuardar = async () => {
     setCargando(true)
@@ -54,13 +61,16 @@ export function EditarPerksModal({ open, onClose, usuario, refresh }: EditarPerk
               type="number"
               min={0}
               value={nuevoPerk}
-              onChange={(e) => setNuevoPerk(parseInt(e.target.value))}
+              onChange={(e) => setNuevoPerk(Number(e.target.value))}
               className="w-full border border-gray-300 rounded-md px-3 py-2"
             />
           </div>
           <div className="flex justify-end gap-3">
             <button
-              onClick={onClose}
+              onClick={() => {
+                setNuevoPerk(usuario.perks) // restaura valor original
+                onClose()
+              }}
               className="bg-gray-300 text-black text-sm px-4 py-1.5 rounded-md hover:bg-gray-400 transition"
               disabled={cargando}
             >
