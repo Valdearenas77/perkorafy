@@ -63,46 +63,48 @@ export function EditarPerksModal({
     <Dialog
       open={open}
       onOpenChange={(estadoAbierto) => {
-        if (!estadoAbierto) onClose()
+        if (!estadoAbierto) {
+          setTimeout(() => {
+            onClose()
+          }, 0)
+        }
       }}
     >
-      <DialogContent key={usuario?.id} className="max-w-md">
-        {usuario && (
-          <>
-            <DialogHeader>
-              <DialogTitle>Editar perks de {usuario.name}</DialogTitle>
-            </DialogHeader>
-            <div className="mt-4 space-y-4">
-              <div>
-                <label className="block mb-1 font-medium">Cantidad de perks</label>
-                <input
-                  type="number"
-                  min={0}
-                  value={nuevoPerk}
-                  onChange={(e) => setNuevoPerk(parseInt(e.target.value) || 0)}
-                  className="w-full border border-gray-300 rounded-md px-3 py-2"
-                />
-              </div>
-              <div className="flex justify-end gap-3">
-                <button
-                  onClick={onClose}
-                  className="bg-gray-300 text-black text-sm px-4 py-1.5 rounded-md hover:bg-gray-400 transition"
-                  disabled={cargando}
-                >
-                  Cancelar
-                </button>
-                <button
-                  onClick={handleGuardar}
-                  className="bg-blue-600 text-white text-sm px-4 py-1.5 rounded-md hover:bg-blue-700 transition"
-                  disabled={cargando}
-                >
-                  Guardar
-                </button>
-              </div>
+      {open && usuario && (
+        <DialogContent key={usuario.id} className="max-w-md">
+          <DialogHeader>
+            <DialogTitle>Editar perks de {usuario.name}</DialogTitle>
+          </DialogHeader>
+          <div className="mt-4 space-y-4">
+            <div>
+              <label className="block mb-1 font-medium">Cantidad de perks</label>
+              <input
+                type="number"
+                min={0}
+                value={nuevoPerk}
+                onChange={(e) => setNuevoPerk(parseInt(e.target.value) || 0)}
+                className="w-full border border-gray-300 rounded-md px-3 py-2"
+              />
             </div>
-          </>
-        )}
-      </DialogContent>
+            <div className="flex justify-end gap-3">
+              <button
+                onClick={onClose}
+                className="bg-gray-300 text-black text-sm px-4 py-1.5 rounded-md hover:bg-gray-400 transition"
+                disabled={cargando}
+              >
+                Cancelar
+              </button>
+              <button
+                onClick={handleGuardar}
+                className="bg-blue-600 text-white text-sm px-4 py-1.5 rounded-md hover:bg-blue-700 transition"
+                disabled={cargando}
+              >
+                Guardar
+              </button>
+            </div>
+          </div>
+        </DialogContent>
+      )}
     </Dialog>
   )
 }

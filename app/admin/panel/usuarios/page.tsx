@@ -1,16 +1,17 @@
 'use client'
 
 import { useEffect, useState } from 'react'
+import { toast } from 'sonner'
+import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
+import { UserActions } from '@/components/admin/UserActions'
+import { EditarPerksModal } from '@/components/admin/EditarPerksModal'
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog'
-import { toast } from 'sonner'
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
-import { UserActions } from '@/components/admin/UserActions'
 
 type Usuario = {
   id: number
@@ -22,8 +23,7 @@ type Usuario = {
 export default function UsuariosPage() {
   const [usuarios, setUsuarios] = useState<Usuario[]>([])
   const [usuarioActivo, setUsuarioActivo] = useState<Usuario | null>(null)
-  const [nuevoPerk, setNuevoPerk] = useState<number>(0)
-  const [abierto, setAbierto] = useState(false)
+  const [modalAbierto, setModalAbierto] = useState(false)
 
   const [crearAbierto, setCrearAbierto] = useState(false)
   const [nuevoNombre, setNuevoNombre] = useState('')
@@ -43,34 +43,50 @@ export default function UsuariosPage() {
 
   const abrirModal = (usuario: Usuario) => {
     setUsuarioActivo(usuario)
-    setNuevoPerk(usuario.perks)
-    setAbierto(true)
+    setModalAbierto(true)
   }
 
-  const guardarPerks = async () => {
-    if (!usuarioActivo) return
+  const cerrarModal = () => {
+    setModalAbierto(false)
+    setUsuarioActivo(null)
+  }
+
+  const handleEditar = (usuario: Usuario) => abrirModal(usuario)
+
+  const handleResetPassword = async (usuario: Usuario) => {
     try {
-      const res = await fetch(`/api/admin/usuarios/${usuarioActivo.id}/perks`, {
-        method: 'PATCH',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ perks: nuevoPerk }),
+      const res = await fetch(`/api/admin/usuarios/${usuario.id}/reset-password`, {
+        method: 'POST',
       })
 
       if (res.ok) {
-        toast.success('Perks actualizados')
-        setUsuarios((prev) =>
-          prev.map((u) =>
-            u.id === usuarioActivo.id ? { ...u, perks: nuevoPerk } : u
-          )
-        )
-        setAbierto(false)
-        window.location.href = '/admin/panel/dashboard'
+        toast.success(`Email de recuperación enviado a ${usuario.email}`)
       } else {
         const data = await res.json()
-        toast.error(data.error || 'Error al actualizar perks')
+        toast.error(data.error || 'Error al generar token')
+      }
+    } catch (error) {
+      toast.error('Error de red al intentar resetear la contraseña')
+    }
+  }
+
+  const handleEliminar = async (usuario: Usuario) => {
+    if (!confirm(`¿Estás seguro de que quieres eliminar a ${usuario.name}? Esta acción no se puede deshacer.`)) return
+
+    try {
+      const res = await fetch(`/api/admin/usuarios/${usuario.id}`, {
+        method: 'DELETE',
+      })
+
+      if (res.ok) {
+        toast.success('Usuario eliminado correctamente')
+        setUsuarios((prev) => prev.filter((u) => u.id !== usuario.id))
+      } else {
+        const data = await res.json()
+        toast.error(data.error || 'Error al eliminar el usuario')
       }
     } catch {
-      toast.error('Error de conexión con el servidor')
+      toast.error('Error de red al intentar eliminar el usuario')
     }
   }
 
@@ -123,45 +139,6 @@ export default function UsuariosPage() {
     }, 2000)
   }
 
-  const handleEditar = (usuario: Usuario) => abrirModal(usuario)
-
-const handleResetPassword = async (usuario: Usuario) => {
-  try {
-    const res = await fetch(`/api/admin/usuarios/${usuario.id}/reset-password`, {
-      method: "POST",
-    });
-
-    if (res.ok) {
-      toast.success(`Email de recuperación enviado a ${usuario.email}`);
-    } else {
-      const data = await res.json();
-      toast.error(data.error || "Error al generar token");
-    }
-  } catch (error) {
-    toast.error("Error de red al intentar resetear la contraseña");
-  }
-};
-
-const handleEliminar = async (usuario: Usuario) => {
-  if (!confirm(`¿Estás seguro de que quieres eliminar a ${usuario.name}? Esta acción no se puede deshacer.`)) return;
-
-  try {
-    const res = await fetch(`/api/admin/usuarios/${usuario.id}`, {
-      method: "DELETE",
-    });
-
-    if (res.ok) {
-      toast.success("Usuario eliminado correctamente");
-      setUsuarios((prev) => prev.filter((u) => u.id !== usuario.id));
-    } else {
-      const data = await res.json();
-      toast.error(data.error || "Error al eliminar el usuario");
-    }
-  } catch {
-    toast.error("Error de red al intentar eliminar el usuario");
-  }
-};
-
   const cumpleLongitud = passwordReal.length >= 6
   const tieneMayuscula = /[A-Z]/.test(passwordReal)
   const tieneNumero = /[0-9]/.test(passwordReal)
@@ -172,17 +149,10 @@ const handleEliminar = async (usuario: Usuario) => {
       <h1 className="text-2xl font-semibold">Gestión de Usuarios</h1>
 
       <div className="flex gap-4">
-        <Button
-          onClick={() => setCrearAbierto(true)}
-          className="px-3 py-1 text-sm bg-blue-600 text-white rounded-md hover:bg-blue-700"
-        >
+        <Button onClick={() => setCrearAbierto(true)} className="px-3 py-1 text-sm bg-blue-600 text-white rounded-md hover:bg-blue-700">
           Crear usuario
         </Button>
-        <Button
-          variant="outline"
-          onClick={() => setCsvAbierto(true)}
-          className="px-3 py-1 text-sm rounded-md"
-        >
+        <Button variant="outline" onClick={() => setCsvAbierto(true)} className="px-3 py-1 text-sm rounded-md">
           Importar CSV
         </Button>
       </div>
@@ -214,50 +184,19 @@ const handleEliminar = async (usuario: Usuario) => {
         </tbody>
       </table>
 
-{/* modal perks */}
-{abierto && usuarioActivo && (
-  <Dialog open={abierto} onOpenChange={(val) => { 
-    if (!val) {
-      setAbierto(false)
-      setUsuarioActivo(null)
-    }
-  }}>
-    <DialogContent>
-      <DialogHeader>
-        <DialogTitle>Editar perks</DialogTitle>
-      </DialogHeader>
+      {/* Modal perks */}
+      <EditarPerksModal
+        open={modalAbierto}
+        onClose={cerrarModal}
+        usuario={usuarioActivo}
+        refresh={() => {
+          fetch('/api/admin/usuarios')
+            .then((res) => res.json())
+            .then((data) => setUsuarios(data))
+        }}
+      />
 
-      <div className="space-y-4">
-        <p>
-          Usuario: <strong>{usuarioActivo.name}</strong>
-        </p>
-        <label className="block text-sm font-medium mb-1">
-          Perks actuales: {usuarioActivo.perks}
-        </label>
-        <input
-          type="number"
-          value={nuevoPerk}
-          onChange={(e) => setNuevoPerk(Number(e.target.value) || 0)}
-          className="w-full border rounded px-3 py-2"
-        />
-
-        <div className="flex justify-end gap-2 pt-2">
-          <Button variant="outline" onClick={() => {
-            setAbierto(false)
-            setUsuarioActivo(null)
-          }}>
-            Cancelar
-          </Button>
-          <Button onClick={guardarPerks} className="bg-blue-600 text-white hover:bg-blue-700">
-            Guardar
-          </Button>
-        </div>
-      </div>
-    </DialogContent>
-  </Dialog>
-)}
-
-      {/* modal crear */}
+      {/* Modal crear */}
       <Dialog open={crearAbierto} onOpenChange={setCrearAbierto}>
         <DialogContent>
           <DialogHeader>
@@ -265,68 +204,32 @@ const handleEliminar = async (usuario: Usuario) => {
           </DialogHeader>
 
           <div className="space-y-4">
-            <Input
-              placeholder="Nombre"
-              value={nuevoNombre}
-              onChange={(e) => setNuevoNombre(e.target.value)}
-            />
-            <Input
-              placeholder="Email"
-              type="email"
-              value={nuevoEmail}
-              onChange={(e) => setNuevoEmail(e.target.value)}
-            />
-            <Input
-              placeholder="Perks iniciales"
-              type="number"
-              value={nuevoPerks}
-              onChange={(e) => setNuevoPerks(Number(e.target.value))}
-            />
-
+            <Input placeholder="Nombre" value={nuevoNombre} onChange={(e) => setNuevoNombre(e.target.value)} />
+            <Input placeholder="Email" type="email" value={nuevoEmail} onChange={(e) => setNuevoEmail(e.target.value)} />
+            <Input placeholder="Perks iniciales" type="number" value={nuevoPerks} onChange={(e) => setNuevoPerks(Number(e.target.value))} />
             <div>
-              <Input
-                placeholder="Contraseña"
-                type="text"
-                value={passwordVisible}
-                onChange={handlePasswordChange}
-              />
-
+              <Input placeholder="Contraseña" type="text" value={passwordVisible} onChange={handlePasswordChange} />
               <div className="text-sm mt-2 space-y-1 text-left">
-                <p className={cumpleLongitud ? 'text-green-600' : 'text-red-500'}>
-                  • Mínimo 6 caracteres
-                </p>
-                <p className={tieneMayuscula ? 'text-green-600' : 'text-red-500'}>
-                  • Al menos una mayúscula
-                </p>
-                <p className={tieneNumero ? 'text-green-600' : 'text-red-500'}>
-                  • Al menos un número
-                </p>
+                <p className={cumpleLongitud ? 'text-green-600' : 'text-red-500'}>• Mínimo 6 caracteres</p>
+                <p className={tieneMayuscula ? 'text-green-600' : 'text-red-500'}>• Al menos una mayúscula</p>
+                <p className={tieneNumero ? 'text-green-600' : 'text-red-500'}>• Al menos un número</p>
               </div>
             </div>
 
             <div className="flex justify-end gap-2 pt-2">
-              <Button variant="outline" onClick={() => setCrearAbierto(false)}>
-                Cancelar
-              </Button>
-              <Button
-                onClick={crearUsuario}
-                disabled={!passwordValida}
-                className="bg-blue-600 text-white hover:bg-blue-700 disabled:opacity-50"
-              >
-                Crear
-              </Button>
+              <Button variant="outline" onClick={() => setCrearAbierto(false)}>Cancelar</Button>
+              <Button onClick={crearUsuario} disabled={!passwordValida} className="bg-blue-600 text-white hover:bg-blue-700 disabled:opacity-50">Crear</Button>
             </div>
           </div>
         </DialogContent>
       </Dialog>
 
-      {/* modal CSV */}
+      {/* Modal CSV */}
       <Dialog open={csvAbierto} onOpenChange={setCsvAbierto}>
         <DialogContent>
           <DialogHeader>
             <DialogTitle>Importar usuarios desde CSV</DialogTitle>
           </DialogHeader>
-
           <p>Este formulario se implementará a continuación.</p>
         </DialogContent>
       </Dialog>
