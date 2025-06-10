@@ -8,7 +8,6 @@ import {
 } from '@/components/ui/dialog'
 import { useEffect, useState } from 'react'
 import { toast } from 'sonner'
-import { Button } from '@/components/ui/button'
 
 type EditarPerksModalProps = {
   open: boolean
@@ -67,7 +66,7 @@ export function EditarPerksModal({
         if (!estadoAbierto) onClose()
       }}
     >
-      <DialogContent className="max-w-md" key={usuario?.id}>
+      <DialogContent key={usuario?.id} className="max-w-md">
         {usuario && (
           <>
             <DialogHeader>
@@ -84,21 +83,21 @@ export function EditarPerksModal({
                   className="w-full border border-gray-300 rounded-md px-3 py-2"
                 />
               </div>
-              <div className="flex justify-end gap-3 pt-2">
-                <Button
-                  variant="outline"
+              <div className="flex justify-end gap-3">
+                <button
                   onClick={onClose}
+                  className="px-3 py-1 text-sm bg-gray-300 text-black rounded-md hover:bg-gray-400 transition"
                   disabled={cargando}
                 >
                   Cancelar
-                </Button>
-                <Button
+                </button>
+                <button
                   onClick={handleGuardar}
+                  className="px-3 py-1 text-sm bg-blue-600 text-white rounded-md hover:bg-blue-700 transition disabled:opacity-50"
                   disabled={cargando}
-                  className="bg-blue-600 text-white hover:bg-blue-700"
                 >
                   Guardar
-                </Button>
+                </button>
               </div>
             </div>
           </>
