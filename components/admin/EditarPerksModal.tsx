@@ -100,4 +100,4 @@ export function EditarPerksModal({
       </DialogContent>
     </Dialog>
   )
-
+}
