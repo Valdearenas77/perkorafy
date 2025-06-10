@@ -67,7 +67,7 @@ export function EditarPerksModal({
         if (!estadoAbierto) onClose()
       }}
     >
-      <DialogContent key={usuario?.id} className="max-w-md">
+      <DialogContent className="max-w-md" key={usuario?.id}>
         {usuario && (
           <>
             <DialogHeader>
@@ -84,7 +84,7 @@ export function EditarPerksModal({
                   className="w-full border border-gray-300 rounded-md px-3 py-2"
                 />
               </div>
-              <div className="flex justify-end gap-2 pt-2">
+              <div className="flex justify-end gap-3 pt-2">
                 <Button
                   variant="outline"
                   onClick={onClose}
