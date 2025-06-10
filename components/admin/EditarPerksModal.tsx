@@ -84,19 +84,18 @@ export function EditarPerksModal({
                   className="w-full border border-gray-300 rounded-md px-3 py-2"
                 />
               </div>
-              <div className="flex justify-end gap-3">
+              <div className="flex justify-end gap-2 pt-2">
                 <Button
                   variant="outline"
                   onClick={onClose}
-                  className="px-3 py-1 text-sm"
                   disabled={cargando}
                 >
                   Cancelar
                 </Button>
                 <Button
                   onClick={handleGuardar}
-                  className="px-3 py-1 text-sm bg-blue-600 text-white hover:bg-blue-700"
                   disabled={cargando}
+                  className="bg-blue-600 text-white hover:bg-blue-700"
                 >
                   Guardar
                 </Button>
@@ -108,3 +107,4 @@ export function EditarPerksModal({
     </Dialog>
   )
 }
+

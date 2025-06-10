@@ -1,17 +1,12 @@
 'use client'
 
 import { useEffect, useState } from 'react'
+import { Dialog } from '@/components/ui/dialog'
 import { toast } from 'sonner'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { UserActions } from '@/components/admin/UserActions'
 import { EditarPerksModal } from '@/components/admin/EditarPerksModal'
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-} from '@/components/ui/dialog'
 
 type Usuario = {
   id: number
@@ -35,19 +30,26 @@ export default function UsuariosPage() {
 
   const [csvAbierto, setCsvAbierto] = useState(false)
 
-  const cargarUsuarios = () => {
+  useEffect(() => {
     fetch('/api/admin/usuarios')
       .then((res) => res.json())
       .then((data) => setUsuarios(data))
-  }
-
-  useEffect(() => {
-    cargarUsuarios()
   }, [])
 
   const abrirModal = (usuario: Usuario) => {
     setUsuarioActivo(usuario)
     setModalAbierto(true)
+  }
+
+  const cerrarModal = () => {
+    setModalAbierto(false)
+    setUsuarioActivo(null)
+  }
+
+  const actualizarLista = () => {
+    fetch('/api/admin/usuarios')
+      .then((res) => res.json())
+      .then((data) => setUsuarios(data))
   }
 
   const crearUsuario = async () => {
@@ -190,20 +192,13 @@ export default function UsuariosPage() {
         </tbody>
       </table>
 
-      {/* modal perks */}
-      {modalAbierto && usuarioActivo && (
-        <EditarPerksModal
-          open={modalAbierto}
-          usuario={usuarioActivo}
-          onClose={() => {
-            setModalAbierto(false)
-            setUsuarioActivo(null)
-          }}
-          refresh={cargarUsuarios}
-        />
-      )}
+      <EditarPerksModal
+        open={modalAbierto}
+        onClose={cerrarModal}
+        usuario={usuarioActivo}
+        refresh={actualizarLista}
+      />
 
-      {/* modal crear */}
       <Dialog open={crearAbierto} onOpenChange={setCrearAbierto}>
         <DialogContent>
           <DialogHeader>
@@ -266,16 +261,15 @@ export default function UsuariosPage() {
         </DialogContent>
       </Dialog>
 
-      {/* modal CSV */}
       <Dialog open={csvAbierto} onOpenChange={setCsvAbierto}>
         <DialogContent>
           <DialogHeader>
             <DialogTitle>Importar usuarios desde CSV</DialogTitle>
           </DialogHeader>
+
           <p>Este formulario se implementará a continuación.</p>
         </DialogContent>
       </Dialog>
     </div>
   )
 }
-
