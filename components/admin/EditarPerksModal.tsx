@@ -25,7 +25,6 @@ export function EditarPerksModal({
   const [nuevoPerk, setNuevoPerk] = useState(0)
   const [cargando, setCargando] = useState(false)
 
-  // Reiniciar perk al abrir el modal
   useEffect(() => {
     if (open && usuario) {
       setNuevoPerk(usuario.perks)
@@ -61,8 +60,13 @@ export function EditarPerksModal({
   }
 
   return (
-    <Dialog open={open} onOpenChange={(estado) => !estado && onClose()}>
-      <DialogContent className="max-w-md" onInteractOutside={(e) => e.preventDefault()}>
+    <Dialog
+      open={open}
+      onOpenChange={(estadoAbierto) => {
+        if (!estadoAbierto) onClose()
+      }}
+    >
+      <DialogContent key={usuario?.id} className="max-w-md">
         {usuario && (
           <>
             <DialogHeader>

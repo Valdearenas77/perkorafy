@@ -214,40 +214,48 @@ const handleEliminar = async (usuario: Usuario) => {
         </tbody>
       </table>
 
-      {/* modal perks */}
-      <Dialog open={abierto} onOpenChange={setAbierto}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Editar perks</DialogTitle>
-          </DialogHeader>
+{/* modal perks */}
+{abierto && usuarioActivo && (
+  <Dialog open={abierto} onOpenChange={(val) => { 
+    if (!val) {
+      setAbierto(false)
+      setUsuarioActivo(null)
+    }
+  }}>
+    <DialogContent>
+      <DialogHeader>
+        <DialogTitle>Editar perks</DialogTitle>
+      </DialogHeader>
 
-          {usuarioActivo && (
-            <div className="space-y-4">
-              <p>
-                Usuario: <strong>{usuarioActivo.name}</strong>
-              </p>
-              <label className="block text-sm font-medium mb-1">
-                Perks actuales: {usuarioActivo.perks}
-              </label>
-              <input
-                type="number"
-                value={nuevoPerk}
-                onChange={(e) => setNuevoPerk(Number(e.target.value) || 0)}
-                className="w-full border rounded px-3 py-2"
-              />
+      <div className="space-y-4">
+        <p>
+          Usuario: <strong>{usuarioActivo.name}</strong>
+        </p>
+        <label className="block text-sm font-medium mb-1">
+          Perks actuales: {usuarioActivo.perks}
+        </label>
+        <input
+          type="number"
+          value={nuevoPerk}
+          onChange={(e) => setNuevoPerk(Number(e.target.value) || 0)}
+          className="w-full border rounded px-3 py-2"
+        />
 
-              <div className="flex justify-end gap-2 pt-2">
-                <Button variant="outline" onClick={() => setAbierto(false)}>
-                  Cancelar
-                </Button>
-                <Button onClick={guardarPerks} className="bg-blue-600 text-white hover:bg-blue-700">
-                  Guardar
-                </Button>
-              </div>
-            </div>
-          )}
-        </DialogContent>
-      </Dialog>
+        <div className="flex justify-end gap-2 pt-2">
+          <Button variant="outline" onClick={() => {
+            setAbierto(false)
+            setUsuarioActivo(null)
+          }}>
+            Cancelar
+          </Button>
+          <Button onClick={guardarPerks} className="bg-blue-600 text-white hover:bg-blue-700">
+            Guardar
+          </Button>
+        </div>
+      </div>
+    </DialogContent>
+  </Dialog>
+)}
 
       {/* modal crear */}
       <Dialog open={crearAbierto} onOpenChange={setCrearAbierto}>
