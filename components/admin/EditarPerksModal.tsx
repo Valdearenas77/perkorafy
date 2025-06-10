@@ -63,8 +63,8 @@ export function EditarPerksModal({
   return (
     <Dialog
       open={open}
-      onOpenChange={(estado) => {
-        if (!estado) onClose()
+      onOpenChange={(estadoAbierto) => {
+        if (!estadoAbierto) onClose()
       }}
     >
       <DialogContent key={usuario?.id} className="max-w-md">
@@ -106,3 +106,4 @@ export function EditarPerksModal({
     </Dialog>
   )
 }
+
