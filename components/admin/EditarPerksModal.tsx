@@ -6,10 +6,9 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog'
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
 import { useEffect, useState } from 'react'
 import { toast } from 'sonner'
+import { Button } from '@/components/ui/button'
 
 type EditarPerksModalProps = {
   open: boolean
@@ -77,23 +76,26 @@ export function EditarPerksModal({
             <div className="mt-4 space-y-4">
               <div>
                 <label className="block mb-1 font-medium">Cantidad de perks</label>
-                <Input
+                <input
                   type="number"
                   min={0}
                   value={nuevoPerk}
                   onChange={(e) => setNuevoPerk(parseInt(e.target.value) || 0)}
+                  className="w-full border border-gray-300 rounded-md px-3 py-2"
                 />
               </div>
               <div className="flex justify-end gap-3">
                 <Button
                   variant="outline"
                   onClick={onClose}
+                  className="px-3 py-1 text-sm"
                   disabled={cargando}
                 >
                   Cancelar
                 </Button>
                 <Button
                   onClick={handleGuardar}
+                  className="px-3 py-1 text-sm bg-blue-600 text-white hover:bg-blue-700"
                   disabled={cargando}
                 >
                   Guardar
@@ -106,4 +108,3 @@ export function EditarPerksModal({
     </Dialog>
   )
 }
-
