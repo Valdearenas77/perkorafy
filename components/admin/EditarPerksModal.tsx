@@ -6,9 +6,9 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog'
-import { Button } from '@/components/ui/button'
 import { useEffect, useState } from 'react'
 import { toast } from 'sonner'
+import { Button } from '@/components/ui/button'
 
 type EditarPerksModalProps = {
   open: boolean
@@ -61,8 +61,13 @@ export function EditarPerksModal({
   }
 
   return (
-    <Dialog open={open} onOpenChange={(estadoAbierto) => { if (!estadoAbierto) onClose() }}>
-      <DialogContent className="max-w-md">
+    <Dialog
+      open={open}
+      onOpenChange={(estado) => {
+        if (!estado) onClose()
+      }}
+    >
+      <DialogContent key={usuario?.id} className="max-w-md">
         {usuario && (
           <>
             <DialogHeader>
@@ -101,4 +106,3 @@ export function EditarPerksModal({
     </Dialog>
   )
 }
-

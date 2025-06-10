@@ -1,16 +1,17 @@
 'use client'
 
 import { useEffect, useState } from 'react'
+import { toast } from 'sonner'
+import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
+import { UserActions } from '@/components/admin/UserActions'
+import { EditarPerksModal } from '@/components/admin/EditarPerksModal'
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog'
-import { toast } from 'sonner'
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
-import { UserActions } from '@/components/admin/UserActions'
 
 type Usuario = {
   id: number
@@ -22,8 +23,7 @@ type Usuario = {
 export default function UsuariosPage() {
   const [usuarios, setUsuarios] = useState<Usuario[]>([])
   const [usuarioActivo, setUsuarioActivo] = useState<Usuario | null>(null)
-  const [nuevoPerk, setNuevoPerk] = useState<number>(0)
-  const [abierto, setAbierto] = useState(false)
+  const [modalAbierto, setModalAbierto] = useState(false)
 
   const [crearAbierto, setCrearAbierto] = useState(false)
   const [nuevoNombre, setNuevoNombre] = useState('')
@@ -35,16 +35,19 @@ export default function UsuariosPage() {
 
   const [csvAbierto, setCsvAbierto] = useState(false)
 
-  useEffect(() => {
+  const cargarUsuarios = () => {
     fetch('/api/admin/usuarios')
       .then((res) => res.json())
       .then((data) => setUsuarios(data))
+  }
+
+  useEffect(() => {
+    cargarUsuarios()
   }, [])
 
   const abrirModal = (usuario: Usuario) => {
     setUsuarioActivo(usuario)
-    setNuevoPerk(usuario.perks)
-    setAbierto(true)
+    setModalAbierto(true)
   }
 
   const crearUsuario = async () => {
@@ -101,17 +104,17 @@ export default function UsuariosPage() {
   const handleResetPassword = async (usuario: Usuario) => {
     try {
       const res = await fetch(`/api/admin/usuarios/${usuario.id}/reset-password`, {
-        method: "POST",
+        method: 'POST',
       })
 
       if (res.ok) {
         toast.success(`Email de recuperación enviado a ${usuario.email}`)
       } else {
         const data = await res.json()
-        toast.error(data.error || "Error al generar token")
+        toast.error(data.error || 'Error al generar token')
       }
     } catch {
-      toast.error("Error de red al intentar resetear la contraseña")
+      toast.error('Error de red al intentar resetear la contraseña')
     }
   }
 
@@ -120,18 +123,18 @@ export default function UsuariosPage() {
 
     try {
       const res = await fetch(`/api/admin/usuarios/${usuario.id}`, {
-        method: "DELETE",
+        method: 'DELETE',
       })
 
       if (res.ok) {
-        toast.success("Usuario eliminado correctamente")
+        toast.success('Usuario eliminado correctamente')
         setUsuarios((prev) => prev.filter((u) => u.id !== usuario.id))
       } else {
         const data = await res.json()
-        toast.error(data.error || "Error al eliminar el usuario")
+        toast.error(data.error || 'Error al eliminar el usuario')
       }
     } catch {
-      toast.error("Error de red al intentar eliminar el usuario")
+      toast.error('Error de red al intentar eliminar el usuario')
     }
   }
 
@@ -188,75 +191,16 @@ export default function UsuariosPage() {
       </table>
 
       {/* modal perks */}
-      {abierto && usuarioActivo && (
-        <Dialog
-          open={abierto}
-          onOpenChange={(val) => {
-            if (!val) {
-              setAbierto(false)
-              setUsuarioActivo(null)
-            }
+      {modalAbierto && usuarioActivo && (
+        <EditarPerksModal
+          open={modalAbierto}
+          usuario={usuarioActivo}
+          onClose={() => {
+            setModalAbierto(false)
+            setUsuarioActivo(null)
           }}
-        >
-          <DialogContent>
-            <DialogHeader>
-              <DialogTitle>Editar perks de {usuarioActivo.name}</DialogTitle>
-            </DialogHeader>
-
-            <div className="space-y-4">
-              <label className="block text-sm font-medium mb-1">
-                Perks actuales
-              </label>
-              <input
-                type="number"
-                value={nuevoPerk}
-                onChange={(e) => setNuevoPerk(Number(e.target.value) || 0)}
-                className="w-full border rounded px-3 py-2"
-              />
-
-              <div className="flex justify-end gap-2 pt-2">
-                <Button
-                  variant="outline"
-                  onClick={() => {
-                    setAbierto(false)
-                    setUsuarioActivo(null)
-                  }}
-                >
-                  Cancelar
-                </Button>
-                <Button
-                  onClick={async () => {
-                    try {
-                      const res = await fetch(`/api/admin/usuarios/${usuarioActivo.id}/perks`, {
-                        method: 'PATCH',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ perks: nuevoPerk }),
-                      })
-                      if (res.ok) {
-                        toast.success('Perks actualizados')
-                        setUsuarios((prev) =>
-                          prev.map((u) =>
-                            u.id === usuarioActivo.id ? { ...u, perks: nuevoPerk } : u
-                          )
-                        )
-                        setAbierto(false)
-                        setUsuarioActivo(null)
-                      } else {
-                        const data = await res.json()
-                        toast.error(data.error || 'Error al actualizar')
-                      }
-                    } catch {
-                      toast.error('Error de red')
-                    }
-                  }}
-                  className="bg-blue-600 text-white hover:bg-blue-700"
-                >
-                  Guardar
-                </Button>
-              </div>
-            </div>
-          </DialogContent>
-        </Dialog>
+          refresh={cargarUsuarios}
+        />
       )}
 
       {/* modal crear */}
@@ -328,7 +272,6 @@ export default function UsuariosPage() {
           <DialogHeader>
             <DialogTitle>Importar usuarios desde CSV</DialogTitle>
           </DialogHeader>
-
           <p>Este formulario se implementará a continuación.</p>
         </DialogContent>
       </Dialog>
