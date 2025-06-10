@@ -6,6 +6,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog'
+import { Button } from '@/components/ui/button'
 import { useEffect, useState } from 'react'
 import { toast } from 'sonner'
 
@@ -60,42 +61,43 @@ export function EditarPerksModal({
   }
 
   return (
-    <Dialog open={open} onOpenChange={(val) => !val && onClose()}>
-      {usuario && (
-        <DialogContent className="max-w-md">
-          <DialogHeader>
-            <DialogTitle>Editar perks de {usuario.name}</DialogTitle>
-          </DialogHeader>
-          <div className="mt-4 space-y-4">
-            <div>
-              <label className="block mb-1 font-medium">Cantidad de perks</label>
-              <input
-                type="number"
-                min={0}
-                value={nuevoPerk}
-                onChange={(e) => setNuevoPerk(parseInt(e.target.value) || 0)}
-                className="w-full border border-gray-300 rounded-md px-3 py-2"
-              />
+    <Dialog open={open} onOpenChange={(estadoAbierto) => { if (!estadoAbierto) onClose() }}>
+      <DialogContent className="max-w-md">
+        {usuario && (
+          <>
+            <DialogHeader>
+              <DialogTitle>Editar perks de {usuario.name}</DialogTitle>
+            </DialogHeader>
+            <div className="mt-4 space-y-4">
+              <div>
+                <label className="block mb-1 font-medium">Cantidad de perks</label>
+                <input
+                  type="number"
+                  min={0}
+                  value={nuevoPerk}
+                  onChange={(e) => setNuevoPerk(parseInt(e.target.value) || 0)}
+                  className="w-full border border-gray-300 rounded-md px-3 py-2"
+                />
+              </div>
+              <div className="flex justify-end gap-3">
+                <Button
+                  variant="outline"
+                  onClick={onClose}
+                  disabled={cargando}
+                >
+                  Cancelar
+                </Button>
+                <Button
+                  onClick={handleGuardar}
+                  disabled={cargando}
+                >
+                  Guardar
+                </Button>
+              </div>
             </div>
-            <div className="flex justify-end gap-3">
-              <button
-                onClick={onClose}
-                className="bg-gray-300 text-black text-sm px-4 py-1.5 rounded-md hover:bg-gray-400 transition"
-                disabled={cargando}
-              >
-                Cancelar
-              </button>
-              <button
-                onClick={handleGuardar}
-                className="bg-blue-600 text-white text-sm px-4 py-1.5 rounded-md hover:bg-blue-700 transition"
-                disabled={cargando}
-              >
-                Guardar
-              </button>
-            </div>
-          </div>
-        </DialogContent>
-      )}
+          </>
+        )}
+      </DialogContent>
     </Dialog>
   )
 }
