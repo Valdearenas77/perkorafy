@@ -59,15 +59,19 @@ export function EditarPerksModal({
     }
   }
 
-  if (!open || !usuario) return null
+  const handleClose = () => {
+    if (!cargando) {
+      onClose()
+    }
+  }
 
   return (
-    <Dialog open={open} onOpenChange={(estadoAbierto) => {
-      if (!estadoAbierto) onClose()
-    }}>
-      <DialogContent key={usuario.id} className="max-w-md">
+    <Dialog open={open} onOpenChange={handleClose}>
+      <DialogContent className="max-w-md">
         <DialogHeader>
-          <DialogTitle>Editar perks de {usuario.name}</DialogTitle>
+          <DialogTitle>
+            {usuario ? `Editar perks de ${usuario.name}` : 'Editar perks'}
+          </DialogTitle>
         </DialogHeader>
         <div className="mt-4 space-y-4">
           <div>
@@ -78,12 +82,13 @@ export function EditarPerksModal({
               value={nuevoPerk}
               onChange={(e) => setNuevoPerk(parseInt(e.target.value) || 0)}
               className="w-full border border-gray-300 rounded-md px-3 py-2"
+              disabled={cargando}
             />
           </div>
           <div className="flex justify-end gap-3">
             <button
-              onClick={onClose}
-              className="px-3 py-1 text-sm bg-gray-300 text-black rounded-md hover:bg-gray-400 transition"
+              onClick={handleClose}
+              className="px-3 py-1 text-sm bg-gray-300 text-black rounded-md hover:bg-gray-400 transition disabled:opacity-50"
               disabled={cargando}
             >
               Cancelar
@@ -91,9 +96,9 @@ export function EditarPerksModal({
             <button
               onClick={handleGuardar}
               className="px-3 py-1 text-sm bg-blue-600 text-white rounded-md hover:bg-blue-700 transition disabled:opacity-50"
-              disabled={cargando}
+              disabled={cargando || !usuario}
             >
-              Guardar
+              {cargando ? 'Guardando...' : 'Guardar'}
             </button>
           </div>
         </div>
@@ -101,3 +106,5 @@ export function EditarPerksModal({
     </Dialog>
   )
 }
+
+
