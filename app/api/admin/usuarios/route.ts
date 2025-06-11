@@ -3,6 +3,7 @@ import { prisma } from '@/lib/prisma';
 import jwt from 'jsonwebtoken';
 import bcrypt from 'bcryptjs';
 import { sendWelcomeEmail } from '@/lib/email/sendWelcomeEmail';
+import { generarTokenRecuperacion } from '@/lib/tokens';
 
 const JWT_SECRET = process.env.JWT_SECRET ?? 'clave_super_secreta';
 
@@ -73,14 +74,21 @@ export async function POST(req: NextRequest) {
       },
     });
 
-    // Enviar correo de bienvenida (nombre real)
+    // Generar el token de recuperación
+    const tokenRecuperacion = await generarTokenRecuperacion(nuevoUsuario.id);
+
+    // Enviar correo de bienvenida con el enlace de activación
     try {
-         console.log('[API] Llamando a sendWelcomeEmail...');
-         await sendWelcomeEmail({ nombre: nuevoUsuario.name, email: nuevoUsuario.email });
-         console.log('[API] Correo enviado con éxito.');
-         } catch (emailError) {
-     console.error('[EMAIL ERROR] Error enviando correo de bienvenida:', emailError);
-     }
+      console.log('[API] Llamando a sendWelcomeEmail...');
+      await sendWelcomeEmail({
+        nombre: nuevoUsuario.name,
+        email: nuevoUsuario.email,
+        token: tokenRecuperacion,
+      });
+      console.log('[API] Correo enviado con éxito.');
+    } catch (emailError) {
+      console.error('[EMAIL ERROR] Error enviando correo de bienvenida:', emailError);
+    }
 
     return NextResponse.json(nuevoUsuario, { status: 201 });
   } catch (err) {
