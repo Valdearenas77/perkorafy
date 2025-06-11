@@ -4,9 +4,11 @@ import path from "path";
 export async function sendWelcomeEmail({
   nombre,
   email,
+  token
 }: {
   nombre: string;
   email: string;
+  token: string;
 }) {
   console.log(`[EMAIL] Preparando envío de bienvenida a ${email}`);
 
@@ -19,6 +21,8 @@ export async function sendWelcomeEmail({
       pass: process.env.SMTP_PASS!,
     },
   });
+
+  const enlaceRecuperacion = `https://app.perkorafy.com/reset-password?token=${token}`
 
   const htmlContent = `
     <table style="max-width: 600px; margin: 0 auto; font-family: sans-serif; border: 1px solid #e0e0e0; border-radius: 8px; overflow: hidden;">
@@ -37,7 +41,8 @@ export async function sendWelcomeEmail({
             <li>⚡ Canjea tus puntos con un solo clic.</li>
             <li>📈 Disfruta de recompensas por tu implicación y compromiso.</li>
           </ul>
-          <p>Ya puedes iniciar sesión en la plataforma con tu correo electrónico registrado. Si no tienes contraseña, solicita una desde la pantalla de acceso.</p>
+          <p>Para establecer tu contraseña inicial y activar tu cuenta, por favor haz clic en el siguiente enlace:</p>
+          <p><a href="${enlaceRecuperacion}" style="color: #2563eb;">Activar mi cuenta</a></p>
           <p>¡Nos alegra tenerte con nosotros!</p>
           <p>— El equipo de Perkorafy</p>
         </td>
@@ -56,7 +61,7 @@ export async function sendWelcomeEmail({
       {
         filename: "logo.png",
         path: logoPath,
-        cid: "logo", // Usado en <img src="cid:logo" />
+        cid: "logo",
       },
     ],
   };

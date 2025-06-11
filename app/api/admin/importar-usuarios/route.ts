@@ -42,7 +42,12 @@ export async function POST(req: NextRequest) {
 
       const token = await generarTokenRecuperacion(nuevoUsuario.id)
 
-      await sendWelcomeEmail(nuevoUsuario.email, token)
+      await sendWelcomeEmail({
+        nombre: nuevoUsuario.name,
+        email: nuevoUsuario.email,
+        token
+      })
+
 
       resultados.push({ email: u.email, status: 'creado' })
     }
