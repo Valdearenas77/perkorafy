@@ -43,10 +43,10 @@ export default function UsuariosPage() {
 
   const cerrarModal = () => {
     setModalAbierto(false)
-    // Pequeño delay para asegurar que el modal se cierre completamente
+    // Limpiar el usuario activo después de un pequeño delay
     setTimeout(() => {
       setUsuarioActivo(null)
-    }, 100)
+    }, 150)
   }
 
   const actualizarLista = () => {
@@ -195,7 +195,7 @@ export default function UsuariosPage() {
         </tbody>
       </table>
 
-      {/* Modal siempre renderizado pero controlado por el estado open */}
+      {/* Modal personalizado que no interfiere con la página */}
       <EditarPerksModal
         open={modalAbierto}
         onClose={cerrarModal}

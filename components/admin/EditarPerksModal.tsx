@@ -1,11 +1,5 @@
 'use client'
 
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-} from '@/components/ui/dialog'
 import { useEffect, useState } from 'react'
 import { toast } from 'sonner'
 
@@ -30,6 +24,26 @@ export function EditarPerksModal({
       setNuevoPerk(usuario.perks)
     }
   }, [open, usuario])
+
+  // Manejar escape key
+  useEffect(() => {
+    const handleEscape = (e: KeyboardEvent) => {
+      if (e.key === 'Escape' && open) {
+        onClose()
+      }
+    }
+
+    if (open) {
+      document.addEventListener('keydown', handleEscape)
+      // Prevenir scroll del body cuando el modal está abierto
+      document.body.style.overflow = 'hidden'
+    }
+
+    return () => {
+      document.removeEventListener('keydown', handleEscape)
+      document.body.style.overflow = 'unset'
+    }
+  }, [open, onClose])
 
   const handleGuardar = async () => {
     if (!usuario) return
@@ -59,21 +73,37 @@ export function EditarPerksModal({
     }
   }
 
-  const handleClose = () => {
-    if (!cargando) {
+  const handleBackdropClick = (e: React.MouseEvent) => {
+    if (e.target === e.currentTarget) {
       onClose()
     }
   }
 
+  if (!open) return null
+
   return (
-    <Dialog open={open} onOpenChange={handleClose}>
-      <DialogContent className="max-w-md">
-        <DialogHeader>
-          <DialogTitle>
+    <div 
+      className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50"
+      onClick={handleBackdropClick}
+    >
+      <div 
+        className="bg-white rounded-lg shadow-lg max-w-md w-full mx-4 p-6"
+        onClick={(e) => e.stopPropagation()}
+      >
+        <div className="flex justify-between items-center mb-4">
+          <h2 className="text-lg font-semibold">
             {usuario ? `Editar perks de ${usuario.name}` : 'Editar perks'}
-          </DialogTitle>
-        </DialogHeader>
-        <div className="mt-4 space-y-4">
+          </h2>
+          <button
+            onClick={onClose}
+            className="text-gray-400 hover:text-gray-600 text-xl font-bold"
+            disabled={cargando}
+          >
+            ×
+          </button>
+        </div>
+
+        <div className="space-y-4">
           <div>
             <label className="block mb-1 font-medium">Cantidad de perks</label>
             <input
@@ -81,29 +111,30 @@ export function EditarPerksModal({
               min={0}
               value={nuevoPerk}
               onChange={(e) => setNuevoPerk(parseInt(e.target.value) || 0)}
-              className="w-full border border-gray-300 rounded-md px-3 py-2"
+              className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
               disabled={cargando}
             />
           </div>
-          <div className="flex justify-end gap-3">
+
+          <div className="flex justify-end gap-3 pt-4">
             <button
-              onClick={handleClose}
-              className="px-3 py-1 text-sm bg-gray-300 text-black rounded-md hover:bg-gray-400 transition disabled:opacity-50"
+              onClick={onClose}
+              className="px-4 py-2 text-sm bg-gray-300 text-black rounded-md hover:bg-gray-400 transition disabled:opacity-50"
               disabled={cargando}
             >
               Cancelar
             </button>
             <button
               onClick={handleGuardar}
-              className="px-3 py-1 text-sm bg-blue-600 text-white rounded-md hover:bg-blue-700 transition disabled:opacity-50"
+              className="px-4 py-2 text-sm bg-blue-600 text-white rounded-md hover:bg-blue-700 transition disabled:opacity-50"
               disabled={cargando || !usuario}
             >
               {cargando ? 'Guardando...' : 'Guardar'}
             </button>
           </div>
         </div>
-      </DialogContent>
-    </Dialog>
+      </div>
+    </div>
   )
 }
 
