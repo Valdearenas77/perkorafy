@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
-import { generarTokenRecuperacion } from '@/lib/tokens'  // esta función ya la tenemos implementada
-import { enviarEmailRecuperacion } from '@/lib/emails'    // suponemos que existe o lo crearemos luego
+import { generarTokenRecuperacion } from '@/lib/tokens'
+import { sendWelcomeEmail } from '@/lib/email/sendWelcomeEmail'
 
 type UsuarioImportado = {
   name: string
@@ -13,7 +13,6 @@ export async function POST(req: NextRequest) {
   try {
     const adminToken = req.headers.get('authorization')
 
-    // Aquí iría tu validación de token de admin. Simplificado para este ejemplo.
     if (!adminToken || adminToken !== process.env.ADMIN_TOKEN) {
       return NextResponse.json({ error: 'No autorizado' }, { status: 401 })
     }
@@ -37,14 +36,13 @@ export async function POST(req: NextRequest) {
           name: u.name,
           email: u.email,
           perks: u.perks || 0,
-          password: '',  // sin contraseña inicial
+          password: '',  
         }
       })
 
       const token = await generarTokenRecuperacion(nuevoUsuario.id)
 
-      // (opcional: activar esto cuando tengamos el email listo)
-      // await enviarEmailRecuperacion(nuevoUsuario.email, token)
+      await sendWelcomeEmail(nuevoUsuario.email, token)
 
       resultados.push({ email: u.email, status: 'creado' })
     }
@@ -55,3 +53,4 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: 'Error interno' }, { status: 500 })
   }
 }
+
