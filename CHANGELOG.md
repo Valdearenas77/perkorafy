@@ -100,3 +100,10 @@ Incluye:
 🧼 Limpieza del endpoint de debug tras verificación completa.
 🧠 Configuración centralizada de entorno local y producción unificados.
 ✅ Preparada para continuar con nuevas funcionalidades de forma segura.
+
+## [2025-06-11] Versión estable v2
+
+- Sustitución del componente Dialog de shadcn/ui por modal personalizado para evitar problemas de overlays bloqueados.
+- Mejor control de estado y limpieza de DOM.
+- Preparado para continuar con la importación de usuarios vía CSV.
+
