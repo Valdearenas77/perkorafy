@@ -107,3 +107,27 @@ Incluye:
 - Mejor control de estado y limpieza de DOM.
 - Preparado para continuar con la importación de usuarios vía CSV.
 
+# Changelog
+
+## v3 - Junio 2025
+
+### Nuevas funcionalidades:
+
+- Implementación completa de importación de usuarios vía CSV.
+- Generación automática de tokens de recuperación de contraseña en las altas.
+- Envío automático de email de bienvenida con enlace de activación de cuenta.
+- Unificación de flujos de alta manual y carga masiva.
+- Creación de tabla `PasswordRecovery` en base de datos para la gestión de tokens.
+- Refactorización de `sendWelcomeEmail` para soportar activación por token.
+- Prisma Client versionado dentro del repositorio para builds estables en Vercel.
+
+### Mejoras técnicas:
+
+- Solución definitiva al conflicto Prisma + Next.js + Vercel para generación de tipos.
+- Versionado de `prisma/generated/client` como patrón profesional de compilación.
+- Limpieza y consolidación completa del flujo de alta de usuarios.
+
+---
+
+*Versión estable revisada y consolidada tras validación completa de builds en Vercel.*
+
