@@ -2,13 +2,14 @@
   "name": "perkorafy",
   "version": "1.0.0",
   "private": true,
-  "scripts": {
-    "dev": "next dev",
-    "build": "next build && cp -R node_modules/.prisma/client node_modules/@prisma/client",
-    "start": "next start",
-    "postinstall": "prisma generate",
-    "lint": "next lint"
-  },
+"scripts": {
+  "dev": "next dev",
+  "build": "next build",
+  "start": "next start",
+  "postinstall": "prisma generate",
+  "lint": "next lint"
+}
+,
   "dependencies": {
     "@prisma/client": "^6.7.0",
     "@radix-ui/react-dialog": "^1.1.13",
