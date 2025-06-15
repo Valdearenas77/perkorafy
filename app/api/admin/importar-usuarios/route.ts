@@ -11,12 +11,6 @@ type UsuarioImportado = {
 
 export async function POST(req: NextRequest) {
   try {
-    const adminToken = req.headers.get('authorization')
-
-    if (!adminToken || adminToken !== process.env.ADMIN_TOKEN) {
-      return NextResponse.json({ error: 'No autorizado' }, { status: 401 })
-    }
-
     const usuarios: UsuarioImportado[] = await req.json()
 
     const resultados: { email: string; status: string }[] = []
@@ -47,7 +41,6 @@ export async function POST(req: NextRequest) {
         email: nuevoUsuario.email,
         token
       })
-
 
       resultados.push({ email: u.email, status: 'creado' })
     }
