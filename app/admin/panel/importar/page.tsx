@@ -4,6 +4,7 @@ import { useState } from 'react'
 import Papa from 'papaparse'
 import { Button } from '@/components/ui/button'
 import { toast } from 'sonner'
+import { useRouter } from 'next/navigation'
 
 type UsuarioImportado = {
   name: string
@@ -15,6 +16,7 @@ export default function ImportarUsuariosPage() {
   const [usuarios, setUsuarios] = useState<UsuarioImportado[]>([])
   const [error, setError] = useState<string | null>(null)
   const [cargando, setCargando] = useState<boolean>(false)
+  const router = useRouter()
 
   const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
@@ -57,8 +59,7 @@ export default function ImportarUsuariosPage() {
       const res = await fetch('/api/admin/importar-usuarios', {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json',
-          'Authorization': process.env.NEXT_PUBLIC_ADMIN_TOKEN || ''  // ajustar aquí si necesitas un token real
+          'Content-Type': 'application/json'
         },
         body: JSON.stringify(usuarios)
       })
@@ -69,6 +70,12 @@ export default function ImportarUsuariosPage() {
         toast.success('Usuarios importados correctamente.')
         console.log('Resultado:', data)
         setUsuarios([])
+
+        // Añadimos el pequeño delay antes de redirigir
+        setTimeout(() => {
+          router.push('/admin/panel/usuarios')
+        }, 1000)
+
       } else {
         toast.error(data.error || 'Error al importar.')
       }
@@ -107,7 +114,11 @@ export default function ImportarUsuariosPage() {
               </li>
             ))}
           </ul>
-          <Button onClick={enviarAlServidor} disabled={cargando} className="mt-4 px-3 py-1 text-sm bg-blue-600 text-white hover:bg-blue-700 disabled:opacity-50">
+          <Button
+            onClick={enviarAlServidor}
+            disabled={cargando}
+            className="mt-4 px-3 py-1 text-sm bg-blue-600 text-white rounded-md hover:bg-blue-700 disabled:opacity-50"
+          >
             {cargando ? 'Importando...' : 'Enviar al servidor'}
           </Button>
         </div>
