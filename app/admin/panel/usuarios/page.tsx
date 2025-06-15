@@ -7,6 +7,7 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { UserActions } from '@/components/admin/UserActions'
 import { EditarPerksModal } from '@/components/admin/EditarPerksModal'
+import Link from 'next/link'
 
 type Usuario = {
   id: number
@@ -28,8 +29,6 @@ export default function UsuariosPage() {
   const [passwordVisible, setPasswordVisible] = useState('')
   const [passwordReal, setPasswordReal] = useState('')
 
-  const [csvAbierto, setCsvAbierto] = useState(false)
-
   useEffect(() => {
     fetch('/api/admin/usuarios')
       .then((res) => res.json())
@@ -43,7 +42,6 @@ export default function UsuariosPage() {
 
   const cerrarModal = () => {
     setModalAbierto(false)
-    // Limpiar el usuario activo después de un pequeño delay
     setTimeout(() => {
       setUsuarioActivo(null)
     }, 150)
@@ -159,13 +157,12 @@ export default function UsuariosPage() {
         >
           Crear usuario
         </Button>
-        <Button
-          variant="outline"
-          onClick={() => setCsvAbierto(true)}
-          className="px-3 py-1 text-sm rounded-md"
-        >
-          Importar CSV
-        </Button>
+
+        <Link href="/admin/panel/importar">
+          <Button variant="outline" className="px-3 py-1 text-sm rounded-md">
+            Importar CSV
+          </Button>
+        </Link>
       </div>
 
       <table className="w-full bg-white shadow rounded-lg mt-4">
@@ -195,7 +192,6 @@ export default function UsuariosPage() {
         </tbody>
       </table>
 
-      {/* Modal personalizado que no interfiere con la página */}
       <EditarPerksModal
         open={modalAbierto}
         onClose={cerrarModal}
@@ -264,18 +260,7 @@ export default function UsuariosPage() {
           </div>
         </DialogContent>
       </Dialog>
-
-      <Dialog open={csvAbierto} onOpenChange={setCsvAbierto}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Importar usuarios desde CSV</DialogTitle>
-          </DialogHeader>
-
-          <p>Este formulario se implementará a continuación.</p>
-        </DialogContent>
-      </Dialog>
     </div>
   )
 }
-
 
