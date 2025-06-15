@@ -107,7 +107,7 @@ export default function ImportarUsuariosPage() {
               </li>
             ))}
           </ul>
-          <Button onClick={enviarAlServidor} disabled={cargando} className="mt-4">
+          <Button onClick={enviarAlServidor} disabled={cargando} className="mt-4 bg-blue-600 text-white hover:bg-blue-700 disabled:opacity-50">
             {cargando ? 'Importando...' : 'Enviar al servidor'}
           </Button>
         </div>
